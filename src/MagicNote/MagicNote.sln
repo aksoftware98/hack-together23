@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33209.295
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicNote.Functions", "MagicNote.Functions\MagicNote.Functions.csproj", "{7053081C-4F36-4EC9-941C-3A6820EE1384}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagicNote.Functions", "MagicNote.Functions\MagicNote.Functions.csproj", "{7053081C-4F36-4EC9-941C-3A6820EE1384}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ABD48ADD-DDC5-41B6-8838-9FD14A0FE4B2}"
 EndProject
@@ -13,15 +13,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{FB656E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{6ED5E518-4B8E-47CB-A58C-B5C0F8C7DC56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicNote.Domain", "MagicNote.Domain\MagicNote.Domain.csproj", "{988122A8-C675-4A78-9B01-161742926D0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagicNote.Domain", "MagicNote.Domain\MagicNote.Domain.csproj", "{988122A8-C675-4A78-9B01-161742926D0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicNote.Core", "MagicNote.Core\MagicNote.Core.csproj", "{D06ACF7C-B428-4751-AB94-43A4E3BBD1B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagicNote.Core", "MagicNote.Core\MagicNote.Core.csproj", "{D06ACF7C-B428-4751-AB94-43A4E3BBD1B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicNote.Shared", "MagicNote.Shared\MagicNote.Shared.csproj", "{DD4F4B59-20D9-4ECC-8AA5-94DD142E50EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagicNote.Shared", "MagicNote.Shared\MagicNote.Shared.csproj", "{DD4F4B59-20D9-4ECC-8AA5-94DD142E50EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicNote.Client.WinUI", "MagicNote.Client.WinUI\MagicNote.Client.WinUI.csproj", "{DED9E01D-E81A-408F-A34E-36E59CE4E0A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagicNote.Client.WinUI", "MagicNote.Client.WinUI\MagicNote.Client.WinUI.csproj", "{DED9E01D-E81A-408F-A34E-36E59CE4E0A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicNote.Client.ViewModels", "MagicNote.Client.ViewModels\MagicNote.Client.ViewModels.csproj", "{7754F4C1-6E6F-41D6-A0F5-CC045E170BD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagicNote.Client.ViewModels", "MagicNote.Client.ViewModels\MagicNote.Client.ViewModels.csproj", "{7754F4C1-6E6F-41D6-A0F5-CC045E170BD3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F71CDC3F-DA42-47F9-ADD0-B86C370A41B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -181,6 +183,7 @@ Global
 		{DD4F4B59-20D9-4ECC-8AA5-94DD142E50EF} = {6ED5E518-4B8E-47CB-A58C-B5C0F8C7DC56}
 		{DED9E01D-E81A-408F-A34E-36E59CE4E0A0} = {FB656EF0-29BF-4675-A25C-B57C06722747}
 		{7754F4C1-6E6F-41D6-A0F5-CC045E170BD3} = {FB656EF0-29BF-4675-A25C-B57C06722747}
+		{F71CDC3F-DA42-47F9-ADD0-B86C370A41B9} = {ABD48ADD-DDC5-41B6-8838-9FD14A0FE4B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9E343A61-3C3A-443C-A11E-308B0B50C145}
