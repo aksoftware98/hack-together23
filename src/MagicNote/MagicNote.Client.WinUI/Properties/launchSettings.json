@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MagicNote.Client.WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MagicNote.Client.WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
