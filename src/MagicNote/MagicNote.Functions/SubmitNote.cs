@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace MagicNote.Functions
 {
-    public static class Function1
+    public static class SubmitNote
     {
         [FunctionName("SubmitNote")]
         public static async Task<IActionResult> Run(
