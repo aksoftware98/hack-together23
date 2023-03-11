@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "MagicNote.Functions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7074",
+      "launchBrowser": false
+    }
+  }
+}

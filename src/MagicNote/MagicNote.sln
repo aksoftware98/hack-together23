@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33209.295
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicNote.Functions", "MagicNote.Functions\MagicNote.Functions.csproj", "{7053081C-4F36-4EC9-941C-3A6820EE1384}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ABD48ADD-DDC5-41B6-8838-9FD14A0FE4B2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{2DA3AB5C-5804-4A75-A725-601A66C00266}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{FB656EF0-29BF-4675-A25C-B57C06722747}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{6ED5E518-4B8E-47CB-A58C-B5C0F8C7DC56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicNote.Domain", "MagicNote.Domain\MagicNote.Domain.csproj", "{988122A8-C675-4A78-9B01-161742926D0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicNote.Core", "MagicNote.Core\MagicNote.Core.csproj", "{D06ACF7C-B428-4751-AB94-43A4E3BBD1B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicNote.Shared", "MagicNote.Shared\MagicNote.Shared.csproj", "{DD4F4B59-20D9-4ECC-8AA5-94DD142E50EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7053081C-4F36-4EC9-941C-3A6820EE1384}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7053081C-4F36-4EC9-941C-3A6820EE1384}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7053081C-4F36-4EC9-941C-3A6820EE1384}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7053081C-4F36-4EC9-941C-3A6820EE1384}.Release|Any CPU.Build.0 = Release|Any CPU
+		{988122A8-C675-4A78-9B01-161742926D0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{988122A8-C675-4A78-9B01-161742926D0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{988122A8-C675-4A78-9B01-161742926D0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{988122A8-C675-4A78-9B01-161742926D0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D06ACF7C-B428-4751-AB94-43A4E3BBD1B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D06ACF7C-B428-4751-AB94-43A4E3BBD1B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D06ACF7C-B428-4751-AB94-43A4E3BBD1B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D06ACF7C-B428-4751-AB94-43A4E3BBD1B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD4F4B59-20D9-4ECC-8AA5-94DD142E50EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD4F4B59-20D9-4ECC-8AA5-94DD142E50EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD4F4B59-20D9-4ECC-8AA5-94DD142E50EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD4F4B59-20D9-4ECC-8AA5-94DD142E50EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7053081C-4F36-4EC9-941C-3A6820EE1384} = {2DA3AB5C-5804-4A75-A725-601A66C00266}
+		{2DA3AB5C-5804-4A75-A725-601A66C00266} = {ABD48ADD-DDC5-41B6-8838-9FD14A0FE4B2}
+		{FB656EF0-29BF-4675-A25C-B57C06722747} = {ABD48ADD-DDC5-41B6-8838-9FD14A0FE4B2}
+		{6ED5E518-4B8E-47CB-A58C-B5C0F8C7DC56} = {ABD48ADD-DDC5-41B6-8838-9FD14A0FE4B2}
+		{988122A8-C675-4A78-9B01-161742926D0F} = {2DA3AB5C-5804-4A75-A725-601A66C00266}
+		{D06ACF7C-B428-4751-AB94-43A4E3BBD1B2} = {2DA3AB5C-5804-4A75-A725-601A66C00266}
+		{DD4F4B59-20D9-4ECC-8AA5-94DD142E50EF} = {6ED5E518-4B8E-47CB-A58C-B5C0F8C7DC56}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E343A61-3C3A-443C-A11E-308B0B50C145}
+	EndGlobalSection
+EndGlobal
