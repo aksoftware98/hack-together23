@@ -1,4 +1,6 @@
-﻿using Microsoft.Identity.Client;
+﻿using MagicNote.Client.ViewModels.Interfaces;
+using MagicNote.Client.ViewModels.Models;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MagicNote.Client.WinUI.Services
 {
-	public class AuthenticationService
+	public class AuthenticationService : IAuthenticationProvider
 	{
 
 
@@ -28,7 +30,7 @@ namespace MagicNote.Client.WinUI.Services
 		/// </summary>
 		/// <param name="scopes"></param>
 		/// <returns> Access Token</returns>
-		public async Task<string> SignInAsync()
+		public async Task<User> SignInAsync()
 		{
 			// Initialize the MSAL library by building a public client application
 			PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
@@ -58,7 +60,8 @@ namespace MagicNote.Client.WinUI.Services
 												  .ConfigureAwait(false);
 				
 			}
-			return authResult.AccessToken;
+
+			return new User(authResult.AccessToken, authResult.ClaimsPrincipal.FindFirst("name").Value, "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=2000");
 		}
 
 
