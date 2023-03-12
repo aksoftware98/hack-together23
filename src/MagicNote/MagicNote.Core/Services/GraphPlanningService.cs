@@ -79,7 +79,66 @@ namespace MagicNote.Core.Services
 							break;
 						}
 					case PlanEntityType.Meeting:
-						break;
+						{
+							// Get the entity
+							var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
+							var eventTime = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Time"));
+							var timeDataType = eventTime.Resolutions.FirstOrDefault();
+							DateTime startTime = DateTime.Now.AddDays(1);
+							if (timeDataType.DateTimeSubKind.Equals("Date"))
+							{
+								startTime = DateTime.ParseExact($"{note.Date:yyyy-MM-dd} {timeDataType.Value}", "yyyy-MM-dd HH:mm:ss", null);
+							}
+							else if (timeDataType.DateTimeSubKind.Equals("DateTime"))
+							{
+								startTime = DateTime.ParseExact(timeDataType.Value, "yyyy-MM-dd HH:mm:ss", null);
+							}
+							DateTime endTime = startTime.AddHours(1);
+
+							var meetingPeople = new List<MeetingPerson>(); 
+							var people = analyzeResult?.Prediction?.Entities?.Where(e => e.Category.Equals("Person"));
+							var contactsFilter = string.Join(" or ", people.Select(p => $"contains(displayName, '{p.Text}')"));
+							var userEntities = (await _graph
+														.Me
+														.Contacts
+														.Request()
+														.Select("id,displayName,emailAddresses")
+														.Filter(contactsFilter)
+														.GetAsync());
+
+							foreach (var person in people)
+							{
+								var user = userEntities.FirstOrDefault(u => u.DisplayName.Contains(person.Text));
+								if (user != null)
+								{
+									meetingPeople.Add(new MeetingPerson()
+									{
+										Id = user.Id,
+										Email = user.EmailAddresses?.FirstOrDefault()?.Address,
+										Name = user.DisplayName,
+										AddContact = false,
+										AddEmailToContact = false,
+									});
+								}
+								else
+									meetingPeople.Add(new MeetingPerson()
+									{
+										Name = person.Text,
+										AddContact = true,
+										AddEmailToContact = true,
+									});
+							}
+							
+							var planItem = new PlanItem()
+							{
+								Title = eventDescription?.Text ?? $"Meeting with {string.Join(",", people.Select(p => p.Text))}",
+								Plan = entityType,
+								StartTime = startTime,
+								EndTime = endTime,
+							};
+							items.Add(planItem);
+							break;
+						}
 					case PlanEntityType.ToDoItem:
 						{
 							// Get the entity
