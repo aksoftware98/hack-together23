@@ -21,5 +21,7 @@ namespace MagicNote.Core
 			return services.AddSingleton<ILanguageUnderstnadingService>(sp => new ConversationalLanguageUnderstandingService(sp.GetRequiredService<HttpClient>(), apiKey));
 		}
 
+		public static IServiceCollection AddPlanningService(this IServiceCollection services)
+			=> services.AddScoped<IPlanningService, GraphPlanningService>(); 
 	}
 }

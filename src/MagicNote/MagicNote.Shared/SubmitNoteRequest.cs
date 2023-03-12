@@ -18,5 +18,8 @@ namespace MagicNote.Shared
 		[JsonPropertyName("query")]
 		public string Query { get; set; }
 
+		[JsonPropertyName("date")]
+		public DateTime Date { get; set; }
+
 	}
 }

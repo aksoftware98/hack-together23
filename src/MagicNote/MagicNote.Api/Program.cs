@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddLanguageUnderstandingService(builder.Configuration["LanguageServiceApiKey"] ?? string.Empty);
 builder.Services.AddSingleton(sp => new HttpClient());
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddPlanningService();
 builder.Services.AddSingleton(sp =>
 {
 	var context = sp.GetRequiredService<IHttpContextAccessor>();
@@ -36,34 +37,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapPost("/submit-note", async ([FromBody]SubmitNoteRequest note, IPlanningService planningService) =>
 {
-	"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapPost("/submit-note", async ([FromBody]SubmitNoteRequest note, ILanguageUnderstnadingService languageService, Microsoft.Graph.GraphServiceClient graphClient) =>
-{
-	var result = await languageService.AnalyzeTextAsync(note.Query);
+	var result = await planningService.AnalyzeNoteAsync(note);
 	return Results.Ok(result);
-});
-app.MapGet("/weatherforecast", () =>
-{
-	var forecast = Enumerable.Range(1, 5).Select(index =>
-		new WeatherForecast
-		(
-			DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-			Random.Shared.Next(-20, 55),
-			summaries[Random.Shared.Next(summaries.Length)]
-		))
-		.ToArray();
-	return forecast;
 })
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+	.WithName("Submit Note")
+	.WithDescription("Submit a note to be analyzed by AI and return a plan object of the graph services to be done")
+	.WithOpenApi();
+
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-	public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
