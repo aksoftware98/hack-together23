@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using MagicNote.Client.ViewModels.Services;
-using MagicNote.Client.ViewModels.ViewModels;
+using MagicNote.Client.ViewModels;
 using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

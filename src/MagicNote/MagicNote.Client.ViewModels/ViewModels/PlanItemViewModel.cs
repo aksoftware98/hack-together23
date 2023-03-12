@@ -2,7 +2,7 @@
 using MagicNote.Shared.DTOs;
 using System.Collections.ObjectModel;
 
-namespace MagicNote.Client.ViewModels.ViewModels
+namespace MagicNote.Client.ViewModels
 {
 	public partial class PlanItemViewModel : ObservableObject
 	{

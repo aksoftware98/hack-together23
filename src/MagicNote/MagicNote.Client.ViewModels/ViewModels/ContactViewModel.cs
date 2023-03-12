@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MagicNote.Shared.DTOs;
 
-namespace MagicNote.Client.ViewModels.ViewModels
+namespace MagicNote.Client.ViewModels
 {
 	public partial class ContactViewModel : ObservableObject
 	{

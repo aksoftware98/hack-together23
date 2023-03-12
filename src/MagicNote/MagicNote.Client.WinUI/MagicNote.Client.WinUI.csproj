@@ -12,6 +12,7 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\ToDoItemPlanDataTemplate.xaml" />
     <None Remove="Pages\LoginPage.xaml" />
     <None Remove="Pages\PlanningPage.xaml" />
   </ItemGroup>
@@ -49,6 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MagicNote.Client.ViewModels\MagicNote.Client.ViewModels.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\ToDoItemPlanDataTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\PlanningPage.xaml">

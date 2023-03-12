@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MagicNote.Client.ViewModels.ViewModels
+namespace MagicNote.Client.ViewModels
 {
 	public partial class PlanningViewModel : BaseViewModel
 	{
