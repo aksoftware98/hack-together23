@@ -53,36 +53,48 @@ namespace MagicNote.Core.Services
 				switch (entityType)
 				{
 					case PlanEntityType.Event:
-						// Get the entity
-						var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
-						var eventTime = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Time"));
-						var timeDataType = eventTime.Resolutions.FirstOrDefault();
-						DateTime startTime = DateTime.Now.AddDays(1);
-						if (timeDataType.DateTimeSubKind.Equals("Date"))
 						{
-							startTime = DateTime.ParseExact($"{note.Date:yyyy-MM-dd} {timeDataType.Value}", "yyyy-MM-dd HH:mm:ss", null);
+							// Get the entity
+							var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
+							var eventTime = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Time"));
+							var timeDataType = eventTime.Resolutions.FirstOrDefault();
+							DateTime startTime = DateTime.Now.AddDays(1);
+							if (timeDataType.DateTimeSubKind.Equals("Date"))
+							{
+								startTime = DateTime.ParseExact($"{note.Date:yyyy-MM-dd} {timeDataType.Value}", "yyyy-MM-dd HH:mm:ss", null);
+							}
+							else if (timeDataType.DateTimeSubKind.Equals("DateTime"))
+							{
+								startTime = DateTime.ParseExact(timeDataType.Value, "yyyy-MM-dd HH:mm:ss", null);
+							}
+							DateTime endTime = startTime.AddHours(1);
+							var planItem = new PlanItem()
+							{
+								Title = eventDescription.Text,
+								Plan = entityType,
+								StartTime = startTime,
+								EndTime = endTime,
+							};
+							items.Add(planItem);
+							break;
 						}
-						else if (timeDataType.DateTimeSubKind.Equals("DateTime"))
-						{
-							startTime = DateTime.ParseExact(timeDataType.Value, "yyyy-MM-dd HH:mm:ss", null);
-						}
-
-						var planItem = new PlanItem()
-						{
-							Title = eventDescription.Text,
-							Plan = entityType,
-							StartTime = startTime
-						};
-						items.Add(planItem);
-						break;
 					case PlanEntityType.Meeting:
 						break;
 					case PlanEntityType.ToDoItem:
-						break;
-					case PlanEntityType.None:
-						break;
+						{
+							// Get the entity
+							var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
+							
+							var planItem = new PlanItem()
+							{
+								Title = eventDescription.Text,
+								Plan = entityType,
+							};
+							items.Add(planItem);
+							break;
+						}
 					default:
-						break;
+						continue;
 				}
 				
 			}
