@@ -12,10 +12,16 @@ namespace MagicNote.Core.Models
 	/// </summary>
 	public class AITextAnalyzeResponse
 	{
+		[JsonPropertyName("result")]
+		public PredicationResult? Result { get; set; }
+	}
+
+	public class PredicationResult
+	{
 		[JsonPropertyName("query")]
 		public string? Query { get; set; }
 
-		[JsonPropertyName("predication")]
+		[JsonPropertyName("prediction")]
 		public Prediction? Prediction { get; set; }
 	}
 
