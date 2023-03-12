@@ -13,14 +13,21 @@
     <StackPanel HorizontalAlignment="Center"
                 VerticalAlignment="Center">
         <TextBlock Text="Welcome to Magic Note" 
-                   FontSize="22"
-                   FontWeight="Black"
-                   Margin="0,0,0,20"/>
-
+                   Style="{ThemeResource TitleTextBlockStyle}"
+                   Margin="5"/>
+        <TextBlock Text="#Hack_Together"
+                   HorizontalAlignment="Center"
+                   Style="{ThemeResource TitleTextBlockStyle}"
+                   Margin="10"/>
+        <TextBlock Text="Developed by Ahmad Mozaffar"
+                   HorizontalAlignment="Center"
+                   Style="{ThemeResource BodyTextBlockStyle}"
+                   Margin="0, 0, 0, 20"/>
+                   
         <Button Width="250"
                 Padding="10"
                 HorizontalAlignment="Center"
-                Style="{ThemeResource DefaultButtonStyle}"
+                Style="{ThemeResource ButtonRevealStyle}"
                 Command="{Binding SignInCommand}"
                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
             <Button.Content>
