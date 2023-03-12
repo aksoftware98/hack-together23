@@ -15,13 +15,13 @@ namespace MagicNote.Core.Interfaces
 		/// </summary>
 		/// <param name="note">Note query request</param>
 		/// <returns></returns>
-		Task<PlanResult> AnalyzeNoteAsync(SubmitNoteRequest note);
+		Task<PlanDetails> AnalyzeNoteAsync(SubmitNoteRequest note);
 
 		/// <summary>
 		/// Submit the final plan to be added to create the events and the meetings in the calendar, and the to-do items
 		/// </summary>
 		/// <param name="plan"></param>
 		/// <returns></returns>
-		Task SubmitPlanAsync(PlanResult plan);
+		Task SubmitPlanAsync(PlanDetails plan);
 	}
 }

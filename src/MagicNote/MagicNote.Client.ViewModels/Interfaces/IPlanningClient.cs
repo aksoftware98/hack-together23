@@ -10,9 +10,9 @@ namespace MagicNote.Client.ViewModels.Interfaces
 	public interface IPlanningClient
 	{
 
-		Task<PlanResult> AnalyzeNoteAsync(string? token, string? note);
+		Task<PlanDetails> AnalyzeNoteAsync(string? token, string? note);
 
-		Task SubmitPlanAsync(PlanResult request);
+		Task SubmitPlanAsync(PlanDetails request);
 
 	}
 }

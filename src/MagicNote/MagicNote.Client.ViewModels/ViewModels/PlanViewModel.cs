@@ -10,7 +10,7 @@ namespace MagicNote.Client.ViewModels
 		[ObservableProperty]
 		private ObservableCollection<PlanItemViewModel> _items = new();
 
-        public PlanViewModel(PlanResult planResult)
+        public PlanViewModel(PlanDetails planResult)
         {
 			Items = new(planResult.Items.Select(p => new PlanItemViewModel(p, RemoveItem)));
 		}

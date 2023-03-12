@@ -28,7 +28,7 @@ namespace MagicNote.Core.Services
 		/// </summary>
 		/// <param name="note">Note query request</param>
 		/// <returns></returns>
-		public async Task<PlanResult> AnalyzeNoteAsync(SubmitNoteRequest note)
+		public async Task<PlanDetails> AnalyzeNoteAsync(SubmitNoteRequest note)
 		{
 			// TODO: Refactor and clean up the code
 			var items = new List<PlanItem>();
@@ -160,13 +160,13 @@ namespace MagicNote.Core.Services
 				
 			}
 
-			return new PlanResult
+			return new PlanDetails
 			{
 				Items = items
 			};
 		}
 
-		public Task SubmitPlanAsync(PlanResult plan)
+		public Task SubmitPlanAsync(PlanDetails plan)
 		{
 			throw new NotImplementedException();
 		}

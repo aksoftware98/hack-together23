@@ -12,7 +12,7 @@ namespace MagicNote.Client.ViewModels.Services
 	public class HttpPlanningClient : IPlanningClient
 	{
 		
-		public Task<PlanResult> AnalyzeNoteAsync(string token, string note)
+		public Task<PlanDetails> AnalyzeNoteAsync(string token, string note)
 		{
 			if (string.IsNullOrWhiteSpace(note))
 				throw new ArgumentNullException(nameof(note));
@@ -69,10 +69,10 @@ namespace MagicNote.Client.ViewModels.Services
 }
 """;
 
-            return Task.FromResult(JsonSerializer.Deserialize<PlanResult>(jsonText));
+            return Task.FromResult(JsonSerializer.Deserialize<PlanDetails>(jsonText));
 		}
 
-		public Task SubmitPlanAsync(PlanResult request)
+		public Task SubmitPlanAsync(PlanDetails request)
 		{
 			throw new NotImplementedException();
 		}

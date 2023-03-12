@@ -8,10 +8,14 @@ using System.Threading.Tasks;
 namespace MagicNote.Shared.DTOs
 {
 
-	public class PlanResult
+	/// <summary>
+	/// DTO represents the plan of tasks that the user is up to for the specific date.
+	/// <see cref="PlanDetails"/> is used to retrieve the result of the AI analysis for the note submitted by the user, also it is used to instruct the server on how to send the tasks (To-do items, events, meetings, etc.) to Microsoft Graph
+	/// </summary>
+	public class PlanDetails
 	{
 
-        public PlanResult()
+        public PlanDetails()
         {
 			Items = Enumerable.Empty<PlanItem>(); 
         }
