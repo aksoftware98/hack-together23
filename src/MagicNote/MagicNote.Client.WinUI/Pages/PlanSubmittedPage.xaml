@@ -9,7 +9,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{x:Bind ViewModel}">
 
 
@@ -26,10 +25,15 @@
                    HorizontalAlignment="Center"
                    Margin="10"/>
 
+        <TextBlock Text="Wish you a productive day tomorrow ;-) and See you soon!!"
+                   Style="{ThemeResource BodyStrongTextBlockStyle}"
+                   HorizontalAlignment="Center"
+                   Margin="4"/>
+        
         <Button Content="Submit another note?"
-                Width="100"
                 HorizontalAlignment="Center"
                 Margin="10"
+                Style="{ThemeResource ButtonRevealStyle}"
                 Command="{x:Bind ViewModel.NavigateToPlanningPageCommand}" />
     </StackPanel>
 

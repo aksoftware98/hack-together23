@@ -59,11 +59,11 @@
                      Margin="3, 10" />
 
             <Button Content="Analyze"
-                    Background="{ThemeResource AccentFillColorDefaultBrush}"
-                    Visibility="{x:Bind ViewModel.IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                    Visibility="{Binding IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"
                     Margin="3"
                     Grid.Row="2"
                     FontSize="16"
+                    Style="{ThemeResource AccentButtonStyle}"
                     Command="{Binding AnalyzeNoteCommand}"
                     HorizontalAlignment="Stretch"/>
 
@@ -72,8 +72,8 @@
                           VerticalAlignment="Center"
                           Width="25"
                           Height="25"
-                          Visibility="{x:Bind ViewModel.IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"
-                          IsActive="{x:Bind ViewModel.IsBusy}"/>
+                          Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
+                          IsActive="{Binding IsBusy}"/>
         </Grid>
 
         <Grid Grid.Column="1"
@@ -112,9 +112,9 @@
             </ListView>
 
             <Button Content="Looks good to me"
-                    Background="{ThemeResource AccentFillColorDefaultBrush}"
+                    Style="{ThemeResource AccentButtonStyle}"
                     Command="{Binding SubmitPlanCommand}"
-                    Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Visibility="{Binding IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"
                     Margin="3"
                     Grid.Row="2"
                     FontSize="16"
@@ -125,7 +125,7 @@
                           VerticalAlignment="Center"
                           Width="25"
                           Height="25"
-                          Visibility="{Binding IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                          Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
                           IsActive="{Binding IsBusy}"/>
         </Grid>
     </Grid>

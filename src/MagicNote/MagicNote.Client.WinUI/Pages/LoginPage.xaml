@@ -17,18 +17,21 @@
                    FontWeight="Black"
                    Margin="0,0,0,20"/>
 
-        <Button Width="200"
+        <Button Width="250"
+                Padding="10"
                 HorizontalAlignment="Center"
+                Style="{ThemeResource DefaultButtonStyle}"
                 Command="{Binding SignInCommand}"
                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
             <Button.Content>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock HorizontalAlignment="Left"
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                    <Image Width="23"
+                           VerticalAlignment="Center"
+                           Source="ms-appx:///Assets/Microsoft-Logo.png" />
+                    <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                              FontFamily="Segoe MDL2 Assets" Text="&#xE102;" />
-                    <TextBlock HorizontalAlignment="Left"
-                               VerticalAlignment="Center"
-                               Margin="10, 0"
+                               Margin="10, 0, 0, 3"
                                Text="Login with Microsoft" />
                 </StackPanel>
             </Button.Content>

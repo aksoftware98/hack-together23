@@ -33,8 +33,8 @@ namespace MagicNote.Client.WinUI
 			MainWindowFrame = AppFrame;
 			App.NavigationService = new NavigationService(MainWindowFrame);
 			new MicaActivator(this);
-			ExtendsContentIntoTitleBar = true;
 			SetTitleBar(AppTitleBar);
+			ExtendsContentIntoTitleBar = true;
 			MainWindowFrame.Navigate(typeof(LoginPage));
 		}
 		

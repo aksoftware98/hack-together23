@@ -18,8 +18,7 @@ namespace MagicNote.Client.WinUI
 		public MicaActivator(Window window)
 		{
 			this.window = window;
-			TrySetSystemBackdrop();
-			window.ExtendsContentIntoTitleBar = true; 
+			TrySetSystemBackdrop(); 
 		}
 
 		private void Window_Activated(object sender, WindowActivatedEventArgs args)
