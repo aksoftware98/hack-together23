@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using MagicNote.Shared;
 using MagicNote.Core.Interfaces;
+using Microsoft.Graph;
+using System.Net.Http;
 
 namespace MagicNote.Functions
 {
@@ -16,7 +18,6 @@ namespace MagicNote.Functions
     {
 
         private readonly ILanguageUnderstnadingService _languageService;
-
 		public SubmitNote(ILanguageUnderstnadingService languageService)
 		{
 			_languageService = languageService;
@@ -31,6 +32,8 @@ namespace MagicNote.Functions
 			
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var request = JsonSerializer.Deserialize<SubmitNoteRequest>(requestBody);
+
+            var serviceClient = new GraphServiceClient(new HttpClient());
 
             var result = await _languageService.AnalyzeTextAsync(request.Query);
 
