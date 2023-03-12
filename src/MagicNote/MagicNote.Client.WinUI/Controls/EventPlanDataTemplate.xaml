@@ -74,7 +74,7 @@
 
                         <TimePicker Margin="5, 5"
                                                     VerticalAlignment="Center"
-                                                    SelectedTime="{Binding StartTime, Converter={StaticResource DateTimeToTimespanConverter}, Mode=TwoWay}" 
+                                                    SelectedTime="{Binding EndTime, Converter={StaticResource DateTimeToTimespanConverter}, Mode=TwoWay}" 
                                                     Grid.Row="1"
                                                     Grid.Column="1"/>
                     </Grid>
