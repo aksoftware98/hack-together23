@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MagicNote.Client.ViewModels.Interfaces;
+using MagicNote.Client.ViewModels.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,14 @@ namespace MagicNote.Client.ViewModels
 			_navigation = navigation;
 		}
 
+		public event Action<User> OnLoginUserSuccessfully = delegate { };
+
 		[RelayCommand]
 		private async Task SignInAsync()
         {
 			IsBusy = true;
 			var user = await _authProvider.SignInAsync();
+			OnLoginUserSuccessfully.Invoke(user);
 			_navigation.NavigateTo("PlanningPage");
 			IsBusy = false; 
         }

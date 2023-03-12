@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
+using MagicNote.Client.ViewModels.Services;
+using MagicNote.Client.ViewModels.ViewModels;
 using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -27,24 +29,15 @@ namespace MagicNote.Client.WinUI.Pages
 	/// </summary>
 	public sealed partial class PlanningPage : Page
 	{
+		public PlanningViewModel ViewModel { get; set; }
 		public PlanningPage()
 		{
 			this.InitializeComponent();
-			lstView.ItemsSource = Items;
+			DataContext = ViewModel = new PlanningViewModel(new HttpPlanningClient(),
+												App.User,
+												App.NavigationService);
 		}
-
-		public SampleItem[] Items = new[]
-		{
-			new SampleItem(),
-			new SampleItem(),
-			new SampleItem(),
-			new SampleItem(),
-		};
+		
 	}
-
-	public class SampleItem
-	{
-		public string[] Contacts { get; set; } = new string[3];
-	}
-
+	
 }

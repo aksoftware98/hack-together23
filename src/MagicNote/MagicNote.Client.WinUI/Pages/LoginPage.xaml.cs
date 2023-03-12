@@ -28,10 +28,15 @@ namespace MagicNote.Client.WinUI.Pages
 	/// </summary>
 	public sealed partial class LoginPage : Page
 	{
+		private LoginViewModel _viewModel;
 		public LoginPage()
 		{
 			this.InitializeComponent();
-			DataContext = new LoginViewModel(new AuthenticationService(), App.NavigationService);
+			DataContext = _viewModel = new LoginViewModel(new AuthenticationService(), App.NavigationService);
+			_viewModel.OnLoginUserSuccessfully += (user) =>
+			{
+				App.User = user;
+			};
 		}
 	}
 }

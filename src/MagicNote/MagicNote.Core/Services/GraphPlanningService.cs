@@ -72,7 +72,7 @@ namespace MagicNote.Core.Services
 							var planItem = new PlanItem()
 							{
 								Title = eventDescription.Text,
-								Plan = entityType,
+								Type = entityType,
 								StartTime = startTime,
 								EndTime = endTime,
 							};
@@ -133,7 +133,7 @@ namespace MagicNote.Core.Services
 							var planItem = new PlanItem()
 							{
 								Title = eventDescription?.Text ?? $"Meeting with {string.Join(",", people.Select(p => p.Text))}",
-								Plan = entityType,
+								Type = entityType,
 								StartTime = startTime,
 								EndTime = endTime,
 								People = meetingPeople
@@ -149,7 +149,7 @@ namespace MagicNote.Core.Services
 							var planItem = new PlanItem()
 							{
 								Title = eventDescription.Text,
-								Plan = entityType,
+								Type = entityType,
 							};
 							items.Add(planItem);
 							break;

@@ -35,7 +35,7 @@ namespace MagicNote.Client.WinUI
 			new MicaActivator(this);
 			ExtendsContentIntoTitleBar = true;
 			SetTitleBar(AppTitleBar);
-			MainWindowFrame.Navigate(typeof(PlanningPage));
+			MainWindowFrame.Navigate(typeof(LoginPage));
 		}
 		
 	}

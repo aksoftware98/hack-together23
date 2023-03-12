@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using MagicNote.Client.ViewModels.Interfaces;
+using MagicNote.Client.ViewModels.Models;
 using MagicNote.Client.WinUI.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -51,7 +52,8 @@ namespace MagicNote.Client.WinUI
 		}
 
 		public static INavigationService NavigationService = null;
-
+		public static User User = null;
+		
 		private Window m_window;
 	}
 }
