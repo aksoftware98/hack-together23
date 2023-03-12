@@ -30,6 +30,7 @@ namespace MagicNote.Core.Services
 		/// <returns></returns>
 		public async Task<PlanResult> AnalyzeNoteAsync(SubmitNoteRequest note)
 		{
+			// TODO: Refactor and clean up the code
 			var items = new List<PlanItem>();
 			// 1- Divide the note into sentences 
 			var sentences = note.Query.Split("\r\n");
@@ -135,6 +136,7 @@ namespace MagicNote.Core.Services
 								Plan = entityType,
 								StartTime = startTime,
 								EndTime = endTime,
+								People = meetingPeople
 							};
 							items.Add(planItem);
 							break;
