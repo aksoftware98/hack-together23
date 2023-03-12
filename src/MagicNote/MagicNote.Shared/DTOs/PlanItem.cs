@@ -7,7 +7,10 @@
         {
 			Title = string.Empty;
 			People = Enumerable.Empty<MeetingPerson>();
-        }
+			Id = Guid.NewGuid().ToString(); 
+		}
+
+		public string Id { get; private set; }
 
 		public PlanEntityType Plan { get; set; }
         public string Title { get; set; }
