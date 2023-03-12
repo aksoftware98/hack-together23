@@ -30,13 +30,21 @@ namespace MagicNote.Client.WinUI.Pages
 		public PlanningPage()
 		{
 			this.InitializeComponent();
-			lstView.ItemsSource = new SampleItem[10];
+			lstView.ItemsSource = Items;
 		}
+
+		public SampleItem[] Items = new[]
+		{
+			new SampleItem(),
+			new SampleItem(),
+			new SampleItem(),
+			new SampleItem(),
+		};
 	}
 
 	public class SampleItem
 	{
-		public Contact[] Contacts = new Contact[3];
+		public string[] Contacts { get; set; } = new string[3];
 	}
-	
+
 }
