@@ -12,17 +12,20 @@ namespace MagicNote.Client.ViewModels
 	{
 
 		private readonly IAuthenticationProvider _authProvider;
-
-        public LoginViewModel(IAuthenticationProvider authProvider)
-        {
-            _authProvider = authProvider; 
-        }
+		private readonly INavigationService _navigation;
+		public LoginViewModel(IAuthenticationProvider authProvider, 
+							  INavigationService navigation)
+		{
+			_authProvider = authProvider;
+			_navigation = navigation;
+		}
 
 		[RelayCommand]
 		private async Task SignInAsync()
         {
 			IsBusy = true;
-			var user = await _authProvider.SignInAsync(); 
+			var user = await _authProvider.SignInAsync();
+			_navigation.NavigateTo("PlanningPage");
 			IsBusy = false; 
         }
 

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
+using MagicNote.Client.ViewModels.Interfaces;
+using MagicNote.Client.WinUI.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -47,6 +49,8 @@ namespace MagicNote.Client.WinUI
 			m_window = new MainWindow();
 			m_window.Activate();
 		}
+
+		public static INavigationService NavigationService = null;
 
 		private Window m_window;
 	}

@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
-using MagicNote.Client.ViewModels;
-using MagicNote.Client.WinUI.Services;
+using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -26,12 +25,18 @@ namespace MagicNote.Client.WinUI.Pages
 	/// <summary>
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
-	public sealed partial class LoginPage : Page
+	public sealed partial class PlanningPage : Page
 	{
-		public LoginPage()
+		public PlanningPage()
 		{
 			this.InitializeComponent();
-			DataContext = new LoginViewModel(new AuthenticationService(), App.NavigationService);
+			lstView.ItemsSource = new SampleItem[10];
 		}
 	}
+
+	public class SampleItem
+	{
+		public Contact[] Contacts = new Contact[3];
+	}
+	
 }

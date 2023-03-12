@@ -13,6 +13,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Pages\LoginPage.xaml" />
+    <None Remove="Pages\PlanningPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,13 +48,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pages\Exceptions\" />
-    <Folder Include="Pages\Interfaces\" />
-    <Folder Include="Pages\Options\" />
-    <Folder Include="Pages\ViewModels\" />
+    <ProjectReference Include="..\MagicNote.Client.ViewModels\MagicNote.Client.ViewModels.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MagicNote.Client.ViewModels\MagicNote.Client.ViewModels.csproj" />
+    <Page Update="Pages\PlanningPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!-- 

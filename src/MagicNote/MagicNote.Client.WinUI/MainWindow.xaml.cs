@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using MagicNote.Client.WinUI.Pages;
+using MagicNote.Client.WinUI.Services;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using Microsoft.UI.Xaml;
@@ -24,15 +25,17 @@ namespace MagicNote.Client.WinUI
 {
 	public sealed partial class MainWindow : Window
 	{
-		
 
+		public Frame MainWindowFrame = null;
 		public MainWindow()
 		{
 			this.InitializeComponent();
+			MainWindowFrame = AppFrame;
+			App.NavigationService = new NavigationService(MainWindowFrame);
 			new MicaActivator(this);
 			ExtendsContentIntoTitleBar = true;
 			SetTitleBar(AppTitleBar);
-			AppFrame.Navigate(typeof(LoginPage));
+			MainWindowFrame.Navigate(typeof(PlanningPage));
 		}
 		
 	}
