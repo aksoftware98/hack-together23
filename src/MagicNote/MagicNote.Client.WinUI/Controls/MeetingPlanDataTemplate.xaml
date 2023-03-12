@@ -82,7 +82,7 @@
                             Margin="3">
                         <Viewbox Width="12"
                              Height="12">
-                            <SymbolIcon Symbol="Delete" Foreground="PaleVioletRed" />
+                            <SymbolIcon Symbol="Delete" Foreground="LightPink" />
                         </Viewbox>
                     </Button>
                 </StackPanel>
@@ -170,26 +170,56 @@
                                                 VerticalAlignment="Center">
                                         <TextBlock  Text="{Binding DisplayName}"
                                                     Style="{ThemeResource BodyTextBlockStyle}"
+                                                    Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}"
                                                     Margin="12, 0"/>
+
+                                        <TextBox Text="{Binding DisplayName, Mode=TwoWay}"
+                                                 Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                 Margin="12,0,0,6"/>
 
                                         <TextBlock  Text="{Binding Email}"
                                                     Style="{ThemeResource BodyTextBlockStyle}"
+                                                    Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}"
                                                     Margin="12, 0"/>
+
+                                        <TextBox Text="{Binding Email, Mode=TwoWay}"
+                                                 Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                 Margin="12,0,0,6"/>
                                     </StackPanel>
 
                                     <StackPanel VerticalAlignment="Center"
                                                 Orientation="Horizontal"
                                                 Grid.Column="2">
-                                        <Button Margin="2">
-                                            <Viewbox Width="16"
-                                                     Height="16">
-                                                <SymbolIcon Symbol="Delete"/>
+                                        <Button Command="{Binding EditCommand}"
+                                                Margin="3"
+                                                Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                            <Viewbox Width="12"
+                                                     Height="12">
+                                                <SymbolIcon Symbol="Save"  />
                                             </Viewbox>
                                         </Button>
-                                        <Button Margin="2">
-                                            <Viewbox Width="16"
-                                                     Height="16">
-                                                <SymbolIcon Symbol="Delete"/>
+                                        
+                                        <Button Command="{Binding SaveChangesCommand}"
+                                                Margin="3"
+                                                Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Viewbox Width="12"
+                                                     Height="12">
+                                                <SymbolIcon Symbol="Save"  />
+                                            </Viewbox>
+                                        </Button>
+                                        <Button Command="{Binding CancelEditCommand}"
+                                                Margin="3"
+                                                Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Viewbox Width="12"
+                                                     Height="12">
+                                                <SymbolIcon Symbol="Cancel" />
+                                            </Viewbox>
+                                        </Button>
+                                        <Button Command="{Binding DeleteCommand}"
+                                                Margin="3">
+                                            <Viewbox Width="12"
+                                                     Height="12">
+                                                <SymbolIcon Symbol="Delete" Foreground="LightPink" />
                                             </Viewbox>
                                         </Button>
                                     </StackPanel>

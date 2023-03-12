@@ -9,10 +9,10 @@ namespace MagicNote.Client.ViewModels
 	{
 
 		private PlanItem _item;
-		
+
 		[ObservableProperty]
 		private string _id = string.Empty;
-		
+
 		[ObservableProperty]
 		private DateTime? _startTime;
 
@@ -36,21 +36,21 @@ namespace MagicNote.Client.ViewModels
 		private string _title = string.Empty;
 		public string Title
 		{
-			get => _title; 
+			get => _title;
 			set
 			{
 				_title = value;
 				OnPropertyChanged(nameof(Title));
 			}
 		}
-			
+
 		[RelayCommand]
 		private void SubmitChanges()
 		{
 			if (string.IsNullOrWhiteSpace(Title))
 				ErrorMessage = "Title is required";
-			
-			IsEditMode = false; 
+
+			IsEditMode = false;
 		}
 
 		[RelayCommand]
@@ -71,6 +71,11 @@ namespace MagicNote.Client.ViewModels
 			DeleteItemAction(Id);
 		}
 
+		private void DeleteContact(ContactViewModel model)
+		{
+			Contacts.Remove(model);
+		}
+
 		public PlanItemViewModel(PlanItem item, Action<string> deleteItemAction)
 		{
 			_item = item;
@@ -79,7 +84,7 @@ namespace MagicNote.Client.ViewModels
 			Title = item.Title;
 			StartTime = item.StartTime;
 			EndTime = item.EndTime;
-			Contacts = item.People == null ? null : new(item.People.Select(p => new ContactViewModel(p)));
+			Contacts = item.People == null ? null : new(item.People.Select(p => new ContactViewModel(p, DeleteContact)));
 			Type = item.Type;
 		}
 	}
