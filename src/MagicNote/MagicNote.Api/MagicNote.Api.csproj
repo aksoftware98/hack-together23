@@ -11,4 +11,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MagicNote.Core\MagicNote.Core.csproj" />
+    <ProjectReference Include="..\MagicNote.Shared\MagicNote.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
