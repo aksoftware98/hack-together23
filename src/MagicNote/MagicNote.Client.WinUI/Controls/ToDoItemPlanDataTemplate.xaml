@@ -34,15 +34,59 @@
                            Text="To Do Task"
                            Style="{ThemeResource BaseTextBlockStyle}"
                            Margin="12,6,0,0"/>
-                <TextBlock Grid.Column="1"
-                           Grid.Row="1"
-                           Text="{Binding Title}"
-                           Style="{ThemeResource BodyTextBlockStyle}"
-                           Margin="12,0,0,6"/>
+                <TextBlock  Grid.Column="1"
+                            Grid.Row="1"
+                            Text="{Binding Title}"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                             Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                            Margin="12,0,0,6"/>
 
+                <TextBox Grid.Column="1"
+                         Grid.Row="1"
+                         Text="{Binding Title, Mode=TwoWay}"
+                         Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}"
+                         Margin="12,0,0,6"/>
 
+                <!-- Action Buttons -->
+                <StackPanel Orientation="Horizontal"
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            HorizontalAlignment="Right">
+                    <Button Command="{Binding EditCommand}"
+                            Margin="3"
+                            Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                        <Viewbox Width="12"
+                             Height="12">
+                            <SymbolIcon Symbol="Edit" />
+                        </Viewbox>
+                    </Button>
+                    <Button Command="{Binding SubmitChangesCommand}"
+                            Margin="3"
+                            Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Viewbox Width="12"
+                             Height="12">
+                            <SymbolIcon Symbol="Save" />
+                        </Viewbox>
+                    </Button>
+                    <Button Command="{Binding CancelEditCommand}"
+                            Margin="3"
+                            Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Viewbox Width="12"
+                             Height="12">
+                            <SymbolIcon Symbol="Cancel" />
+                        </Viewbox>
+                    </Button>
+                    <Button Command="{Binding DeleteCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                            CommandParameter="{Binding Id}"
+                            Margin="3">
+                        <Viewbox Width="12"
+                             Height="12">
+                            <SymbolIcon Symbol="Delete" Foreground="PaleVioletRed" />
+                        </Viewbox>
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
     </DataTemplate>
-    
+
 </ResourceDictionary>

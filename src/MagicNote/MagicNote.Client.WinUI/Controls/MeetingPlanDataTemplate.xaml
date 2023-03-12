@@ -36,11 +36,57 @@
                                     Style="{ThemeResource BaseTextBlockStyle}"
                                     Margin="12,6,0,0"/>
                 <TextBlock  Grid.Column="1"
-                                    Grid.Row="1"
-                                    Text="{Binding Title}"
-                                    Style="{ThemeResource BodyTextBlockStyle}"
-                                    Margin="12,0,0,6"/>
+                            Grid.Row="1"
+                            Text="{Binding Title}"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                             Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                            Margin="12,0,0,6"/>
 
+                <TextBox Grid.Column="1"
+                         Grid.Row="1"
+                         Text="{Binding Title, Mode=TwoWay}"
+                         Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}"
+                         Margin="12,0,0,6"/>
+
+
+                <!-- Action Buttons -->
+                <StackPanel Orientation="Horizontal"
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            HorizontalAlignment="Right">
+                    <Button Command="{Binding EditCommand}"
+                            Margin="3"
+                            Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                        <Viewbox Width="12"
+                             Height="12">
+                            <SymbolIcon Symbol="Edit" />
+                        </Viewbox>
+                    </Button>
+                    <Button Command="{Binding SubmitChangesCommand}"
+                            Margin="3"
+                            Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Viewbox Width="12"
+                             Height="12">
+                            <SymbolIcon Symbol="Save" />
+                        </Viewbox>
+                    </Button>
+                    <Button Command="{Binding CancelEditCommand}"
+                            Margin="3"
+                            Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Viewbox Width="12"
+                             Height="12">
+                            <SymbolIcon Symbol="Cancel" />
+                        </Viewbox>
+                    </Button>
+                    <Button Command="{Binding DeleteCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                            CommandParameter="{Binding Id}"
+                            Margin="3">
+                        <Viewbox Width="12"
+                             Height="12">
+                            <SymbolIcon Symbol="Delete" Foreground="PaleVioletRed" />
+                        </Viewbox>
+                    </Button>
+                </StackPanel>
 
                 <StackPanel Grid.ColumnSpan="2"
                                             Grid.Row="2"
@@ -61,22 +107,43 @@
                                                     Grid.Row="0"
                                                    Grid.Column="0"/>
 
-                        <TimePicker Margin="5, 0"
-                                    VerticalAlignment="Center"
-                                    SelectedTime="{Binding StartTime, Converter={StaticResource DateTimeToTimespanConverter}, Mode=TwoWay}"
-                                    Grid.Row="0"
-                                    Grid.Column="1"/>
-                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
-                                                   Text="End time:"
-                                                   VerticalAlignment="Center" 
-                                                   Grid.Row="1"
-                                                   Grid.Column="0"/>
+                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                   Text="{Binding StartTime, Converter={StaticResource DateTimeToTimeStringConverter}}"
+                                   Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                   VerticalAlignment="Center"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   Margin="20, 5"/>
 
                         <TimePicker Margin="5, 5"
-                                                    VerticalAlignment="Center"
-                                                    SelectedTime="{Binding EndTime, Converter={StaticResource DateTimeToTimespanConverter}, Mode=TwoWay}" 
-                                                    Grid.Row="1"
-                                                    Grid.Column="1"/>
+                                    VerticalAlignment="Center"
+                                    SelectedTime="{Binding StartTime, Converter={StaticResource DateTimeToTimespanConverter}, Mode=TwoWay}"
+                                    Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    Grid.Row="0"
+                                    IsEnabled="{Binding IsEditMode}"
+                                    Grid.Column="1"/>
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+                                   Text="End time:"
+                                   VerticalAlignment="Center" 
+                                   Grid.Row="1"
+                                   Grid.Column="0"/>
+
+
+                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                   Text="{Binding EndTime, Converter={StaticResource DateTimeToTimeStringConverter}}"
+                                    Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                   Margin="20, 5"
+                                   VerticalAlignment="Center"
+                                   Grid.Row="1"
+                                   Grid.Column="1"/>
+
+                        <TimePicker Margin="5, 5"
+                                    VerticalAlignment="Center"
+                                    SelectedTime="{Binding EndTime, Converter={StaticResource DateTimeToTimespanConverter}, Mode=TwoWay}" 
+                                    Grid.Row="1"
+                                    IsEnabled="{Binding IsEditMode}"
+                                    Grid.Column="1"
+                                     Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     </Grid>
 
                     <TextBlock Text="Participants"
