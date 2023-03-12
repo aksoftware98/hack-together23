@@ -21,29 +21,29 @@ namespace MagicNote.Client.ViewModels.Services
 				{
     "items": [
         {
-            "plan": 0,
-            "title": "buy some stationary",
+            "type": 0,
+            "title": "Buy some stationary",
             "startTime": "2023-03-13T21:00:00",
             "endTime": "2023-03-13T22:00:00",
             "people": []
         },
         {
-            "plan": 0,
-            "title": "play football",
+            "type": 0,
+            "title": "Play football",
             "startTime": "2023-03-13T19:00:00",
             "endTime": "2023-03-13T20:00:00",
             "people": []
         },
         {
-            "plan": 2,
-            "title": "study some Azure",
+            "type": 2,
+            "title": "Study some Azure",
             "startTime": null,
             "endTime": null,
             "people": []
         },
         {
-            "plan": 1,
-            "title": "to",
+            "type": 1,
+            "title": "Talk to Julio",
             "startTime": "2023-03-13T20:30:00",
             "endTime": "2023-03-13T21:30:00",
             "people": [

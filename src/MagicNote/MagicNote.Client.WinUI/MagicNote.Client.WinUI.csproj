@@ -12,6 +12,8 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\EventPlanDataTemplate.xaml" />
+    <None Remove="Controls\MeetingPlanDataTemplate.xaml" />
     <None Remove="Controls\ToDoItemPlanDataTemplate.xaml" />
     <None Remove="Pages\LoginPage.xaml" />
     <None Remove="Pages\PlanningPage.xaml" />
@@ -44,6 +46,14 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Controls\EventPlanDataTemplate.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\MeetingPlanDataTemplate.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Pages\LoginPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -35,6 +35,7 @@ namespace MagicNote.Client.ViewModels
 			StartTime = item.StartTime;
 			EndDate = item.EndTime;
 			Contacts = item.People == null ? null : new(item.People.Select(p => new ContactViewModel(p)));
+			Type = item.Type;
 		}
 	}
 }

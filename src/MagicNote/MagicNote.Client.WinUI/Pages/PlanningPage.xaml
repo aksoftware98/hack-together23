@@ -6,11 +6,19 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MagicNote.Client.WinUI.Pages"
+    xmlns:root="using:MagicNote.Client.WinUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:MagicNote.Client.ViewModels"
     mc:Ignorable="d"
     DataContext="{x:Bind ViewModel}">
+
+    <Page.Resources>
+        <root:PlanItemDataTemplateSelector x:Key="PlanItemTemplateSelector"
+                                               EventPlanTemplate="{StaticResource EventPlanDataTemplate}"
+                                               MeetingPlanTemplate="{StaticResource MeetingPlanDataTemplate}"
+                                               ToDoItemPlanTemplate="{StaticResource ToDoItemPlanDataTemplate}"/>
+    </Page.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -99,8 +107,8 @@
                       Margin="3, 10"
                       ItemsSource="{Binding Plan.Items}"
                       SelectionMode="None"
-                      ItemTemplate="{StaticResource ToDoItemPlanDataTemplate}">
-                
+                      ItemTemplateSelector="{StaticResource PlanItemTemplateSelector}">
+
             </ListView>
 
             <Button Content="Looks good to me"
