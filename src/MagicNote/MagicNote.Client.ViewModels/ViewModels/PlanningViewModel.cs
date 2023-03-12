@@ -51,5 +51,17 @@ namespace MagicNote.Client.ViewModels
 			IsPlanSubmitted = true;
 			IsBusy = false;
 		}
+
+		[RelayCommand]
+		private async Task SubmitPlanAsync()
+		{
+			// TODO: Validate the plan client-side 
+			IsBusy = true;
+
+			//await _planningClient.SubmitPlanAsync(new());
+			await Task.Delay(4000);
+			_navigation.NavigateTo("PlanSubmittedPage");
+			IsBusy = false;
+		}
 	}
 }

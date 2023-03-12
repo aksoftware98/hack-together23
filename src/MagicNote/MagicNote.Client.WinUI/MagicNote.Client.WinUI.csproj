@@ -17,6 +17,7 @@
     <None Remove="Controls\ToDoItemPlanDataTemplate.xaml" />
     <None Remove="Pages\LoginPage.xaml" />
     <None Remove="Pages\PlanningPage.xaml" />
+    <None Remove="Pages\PlanSubmittedPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +61,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MagicNote.Client.ViewModels\MagicNote.Client.ViewModels.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\PlanSubmittedPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\ToDoItemPlanDataTemplate.xaml">

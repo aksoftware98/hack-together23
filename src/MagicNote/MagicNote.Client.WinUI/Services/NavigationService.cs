@@ -14,7 +14,8 @@ namespace MagicNote.Client.WinUI.Services
 
 		static IReadOnlyDictionary<string, Type> _pagesByKey = new Dictionary<string, Type>
 		{
-			{ "PlanningPage", typeof(PlanningPage) }
+			{ "PlanningPage", typeof(PlanningPage) },
+			{ "PlanSubmittedPage", typeof(PlanSubmittedPage) }
 		};
 
         public NavigationService(Frame frame)

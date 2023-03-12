@@ -1,0 +1,36 @@
+<!-- Copyright (c) Microsoft Corporation and Contributors. -->
+<!-- Licensed under the MIT License. -->
+
+<Page
+    x:Class="MagicNote.Client.WinUI.Pages.PlanSubmittedPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MagicNote.Client.WinUI.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    DataContext="{x:Bind ViewModel}">
+
+
+    <StackPanel HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+        <Image Source="ms-appx:///Assets/Sun.png"
+                Width="100"
+                Height="100"
+               HorizontalAlignment="Center"
+               Margin="10"/>
+
+        <TextBlock Text="Thank you for your submission!"
+                   Style="{ThemeResource TitleTextBlockStyle}"
+                   HorizontalAlignment="Center"
+                   Margin="10"/>
+
+        <Button Content="Submit another note?"
+                Width="100"
+                HorizontalAlignment="Center"
+                Margin="10"
+                Command="{x:Bind ViewModel.NavigateToPlanningPageCommand}" />
+    </StackPanel>
+
+</Page>

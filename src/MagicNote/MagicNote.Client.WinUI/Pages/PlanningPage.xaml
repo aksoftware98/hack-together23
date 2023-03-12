@@ -113,10 +113,20 @@
 
             <Button Content="Looks good to me"
                     Background="{ThemeResource AccentFillColorDefaultBrush}"
+                    Command="{Binding SubmitPlanCommand}"
+                    Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
                     Margin="3"
                     Grid.Row="2"
                     FontSize="16"
                     HorizontalAlignment="Stretch"/>
+
+            <ProgressRing Grid.Row="2"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Width="25"
+                          Height="25"
+                          Visibility="{Binding IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                          IsActive="{Binding IsBusy}"/>
         </Grid>
     </Grid>
 </Page>
