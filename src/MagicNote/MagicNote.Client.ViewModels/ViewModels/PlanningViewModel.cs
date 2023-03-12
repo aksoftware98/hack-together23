@@ -46,11 +46,8 @@ namespace MagicNote.Client.ViewModels
 			IsBusy = true;
 			var plan = await _planningClient.AnalyzeNoteAsync(_user?.AccessToken, Note);
 			await Task.Delay(2500);
-			Plan = new()
-			{
-				Items = new(plan.Items.Select(p => new PlanItemViewModel(p)))
-			};
-
+			Plan = new(plan);
+			
 			IsPlanSubmitted = true;
 			IsBusy = false;
 		}

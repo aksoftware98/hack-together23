@@ -31,6 +31,8 @@ namespace MagicNote.Client.ViewModels
 		[ObservableProperty]
 		private string _errorMessage = string.Empty;
 
+		public Action<string> DeleteItemAction { get; set; }
+
 		private string _title = string.Empty;
 		public string Title
 		{
@@ -63,9 +65,16 @@ namespace MagicNote.Client.ViewModels
 			IsEditMode = true;
 		}
 
-		public PlanItemViewModel(PlanItem item)
+		[RelayCommand]
+		private void Delete()
+		{
+			DeleteItemAction(Id);
+		}
+
+		public PlanItemViewModel(PlanItem item, Action<string> deleteItemAction)
 		{
 			_item = item;
+			DeleteItemAction = deleteItemAction;
 			Id = item.Id;
 			Title = item.Title;
 			StartTime = item.StartTime;

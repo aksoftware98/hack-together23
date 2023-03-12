@@ -78,7 +78,7 @@
                             <SymbolIcon Symbol="Cancel" />
                         </Viewbox>
                     </Button>
-                    <Button Command="{Binding DeleteCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                    <Button Command="{Binding RemoveItemCommand, RelativeSource={RelativeSource TemplatedParent}}"
                             CommandParameter="{Binding Id}"
                             Margin="3">
                         <Viewbox Width="12"
