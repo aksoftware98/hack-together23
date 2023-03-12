@@ -23,6 +23,7 @@
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
             <converters:DateTimeToTimeSpanConverter x:Key="DateTimeToTimespanConverter" />
             <converters:DateTimeToTimeStringConverter x:Key="DateTimeToTimeStringConverter" />
+            <converters:EmptyEmailToStringConverter x:Key="EmptyEmailToStringConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -4,6 +4,10 @@ using MagicNote.Shared.DTOs;
 
 namespace MagicNote.Client.ViewModels
 {
+	// TODO: Support the save state of the edit before save (when cancel the edits) 
+	// TODO: Remove the property of AddEmail to update
+	// TODO: Support a better error message and validations
+	// TODO: Show the Save Contact only if actual changes happens 
 	public partial class ContactViewModel : ObservableObject
 	{
 
@@ -30,25 +34,18 @@ namespace MagicNote.Client.ViewModels
 		[ObservableProperty]
 		private string _errorMessage = string.Empty;
 
+		[ObservableProperty]
+		private bool _isDeleteAllowed = true;
+
+		[ObservableProperty]
+		private bool _isValidEmail = false; 
+
 		public Action<ContactViewModel> DeleteItemAction { get; set; }
-
-		private string _title = string.Empty;
-		public string Title
-		{
-			get => _title;
-			set
-			{
-				_title = value;
-				OnPropertyChanged(nameof(Title));
-			}
-		}
-
+		
 		[RelayCommand]
 		private void SaveChanges()
 		{
-			if (string.IsNullOrWhiteSpace(Title))
-				ErrorMessage = "Title is required";
-
+			IsValidEmail = !string.IsNullOrWhiteSpace(Email);
 			IsEditMode = false;
 		}
 
@@ -69,8 +66,7 @@ namespace MagicNote.Client.ViewModels
 		{
 			DeleteItemAction(this);
 		}
-
-
+		
 		public ContactViewModel(MeetingPerson person, Action<ContactViewModel> deleteAction)
 		{
 			_person = person;
@@ -78,8 +74,9 @@ namespace MagicNote.Client.ViewModels
 			Id = person.Id;
 			Email = person.Email;
 			DisplayName = person.Name;
-			AddContact = person.AddContact;
+			AddContact = true;
 			UpdateEmail = person.AddEmailToContact;
+			IsValidEmail = !string.IsNullOrWhiteSpace(Email);
 		}
 	}
 }

@@ -73,6 +73,13 @@ namespace MagicNote.Client.ViewModels
 
 		private void DeleteContact(ContactViewModel model)
 		{
+			if (Contacts.Count == 1)
+			{
+				var firstContact = Contacts.FirstOrDefault();
+				firstContact.IsDeleteAllowed = false;
+				return;
+			}
+				
 			Contacts.Remove(model);
 		}
 

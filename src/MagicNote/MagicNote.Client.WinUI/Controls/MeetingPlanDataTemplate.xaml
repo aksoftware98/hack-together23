@@ -175,27 +175,34 @@
 
                                         <TextBox Text="{Binding DisplayName, Mode=TwoWay}"
                                                  Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                 Margin="12,0,0,6"/>
+                                                 Margin="12,0,0,6"
+                                                 PlaceholderText="Display name"/>
 
-                                        <TextBlock  Text="{Binding Email}"
+                                        <TextBlock  Text="{Binding Email, Converter={StaticResource EmptyEmailToStringConverter}}"
                                                     Style="{ThemeResource BodyTextBlockStyle}"
                                                     Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}"
                                                     Margin="12, 0"/>
 
                                         <TextBox Text="{Binding Email, Mode=TwoWay}"
                                                  Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                 Margin="12,0,0,6"/>
+                                                 Margin="12,0,0,6"
+                                                 PlaceholderText="Email address"/>
+
+                                        <CheckBox Content="Save contact changes after submit"
+                                                  Margin="12, 0"
+                                                  Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                                  IsChecked="{Binding AddContact, Mode=TwoWay}"/>
                                     </StackPanel>
 
                                     <StackPanel VerticalAlignment="Center"
-                                                Orientation="Horizontal"
-                                                Grid.Column="2">
+                                                Grid.Column="2"
+                                                Orientation="Horizontal">
                                         <Button Command="{Binding EditCommand}"
                                                 Margin="3"
                                                 Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                                             <Viewbox Width="12"
                                                      Height="12">
-                                                <SymbolIcon Symbol="Save"  />
+                                                <SymbolIcon Symbol="Edit"  />
                                             </Viewbox>
                                         </Button>
                                         
@@ -216,7 +223,9 @@
                                             </Viewbox>
                                         </Button>
                                         <Button Command="{Binding DeleteCommand}"
-                                                Margin="3">
+                                                Margin="3"
+                                                Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                                IsEnabled="{Binding IsDeleteAllowed}">
                                             <Viewbox Width="12"
                                                      Height="12">
                                                 <SymbolIcon Symbol="Delete" Foreground="LightPink" />
