@@ -4,6 +4,7 @@ using MagicNote.Shared.DTOs;
 using MagicNote.Shared.Responses;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
@@ -36,6 +37,8 @@ namespace MagicNote.Client.ViewModels.Services
 			}
 			else
 			{
+				var content = await response.Content.ReadAsStringAsync();
+				Debug.WriteLine(content);
 				var error = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
 				throw new ApiException(error);
 			}

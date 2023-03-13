@@ -75,7 +75,7 @@ namespace MagicNote.Core.Services
 							DateTime endTime = startTime.AddHours(1);
 							var planItem = new PlanItem()
 							{
-								Title = eventDescription.Text,
+								Title = CapitilizeFirstLetter(eventDescription.Text),
 								Type = entityType,
 								StartTime = startTime,
 								EndTime = endTime,
@@ -136,7 +136,7 @@ namespace MagicNote.Core.Services
 							
 							var planItem = new PlanItem()
 							{
-								Title = eventDescription?.Text ?? $"Meeting with {string.Join(",", people.Select(p => p.Text))}",
+								Title = CapitilizeFirstLetter(eventDescription?.Text) ?? $"Meeting with {string.Join(",", people.Select(p => p.Text))}",
 								Type = entityType,
 								StartTime = startTime,
 								EndTime = endTime,
@@ -152,7 +152,7 @@ namespace MagicNote.Core.Services
 							
 							var planItem = new PlanItem()
 							{
-								Title = eventDescription.Text,
+								Title = CapitilizeFirstLetter(eventDescription.Text),
 								Type = entityType,
 							};
 							items.Add(planItem);
@@ -173,6 +173,16 @@ namespace MagicNote.Core.Services
 		public Task SubmitPlanAsync(PlanDetails plan)
 		{
 			return Task.CompletedTask;
+		}
+
+		private string CapitilizeFirstLetter(string text)
+		{
+			if (text.Length == 0)
+				return text;
+			else if (text.Length == 1)
+				return text.ToUpper();
+			else
+				return text.Substring(0, 1).ToUpper() + text.Substring(1);
 		}
 	}
 }
