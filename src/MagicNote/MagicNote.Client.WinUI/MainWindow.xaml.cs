@@ -36,7 +36,17 @@ namespace MagicNote.Client.WinUI
 			SetTitleBar(AppTitleBar);
 			ExtendsContentIntoTitleBar = true;
 			MainWindowFrame.Navigate(typeof(LoginPage));
+			App.OnUserLogsIn += OnUserLogsIn;
 		}
+
+		private void OnUserLogsIn(ViewModels.Models.User obj)
+		{
+			LoginVisibility = Visibility.Visible;
+			Username = obj.FullName;
+		}
+
+		public Visibility LoginVisibility { get; set; } = Visibility.Collapsed;
+		public string Username { get; set; } = string.Empty;
 		
 	}
 }

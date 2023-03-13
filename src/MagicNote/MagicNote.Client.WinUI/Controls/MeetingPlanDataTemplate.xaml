@@ -82,7 +82,7 @@
                             Margin="3">
                         <Viewbox Width="12"
                              Height="12">
-                            <SymbolIcon Symbol="Delete" Foreground="LightPink" />
+                            <SymbolIcon Symbol="Delete" Foreground="Pink" />
                         </Viewbox>
                     </Button>
                 </StackPanel>

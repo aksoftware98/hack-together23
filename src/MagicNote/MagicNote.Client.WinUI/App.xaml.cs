@@ -52,8 +52,16 @@ namespace MagicNote.Client.WinUI
 		}
 
 		public static INavigationService NavigationService = null;
-		public static User User = null;
-		
+		public static User User { get; private set; }
+
+		public static event Action<User> OnUserLogsIn = delegate { };
+
+		public static void LoginUser(User user)
+		{
+			User = user;
+			OnUserLogsIn(user);
+		}
+
 		private Window m_window;
 	}
 }

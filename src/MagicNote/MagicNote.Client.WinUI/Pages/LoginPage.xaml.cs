@@ -33,10 +33,17 @@ namespace MagicNote.Client.WinUI.Pages
 		{
 			this.InitializeComponent();
 			DataContext = _viewModel = new LoginViewModel(new AuthenticationService(), App.NavigationService);
-			_viewModel.OnLoginUserSuccessfully += (user) =>
-			{
-				App.User = user;
-			};
+			_viewModel.OnLoginUserSuccessfully += OnLoginUserSuccessfully;
+		}
+
+		private void OnLoginUserSuccessfully(ViewModels.Models.User user)
+		{
+			App.LoginUser(user);
+		}
+
+		protected override void OnNavigatedFrom(NavigationEventArgs e)
+		{
+			_viewModel.OnLoginUserSuccessfully -= OnLoginUserSuccessfully;
 		}
 	}
 }
