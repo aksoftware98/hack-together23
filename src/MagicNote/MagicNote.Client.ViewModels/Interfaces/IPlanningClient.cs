@@ -12,7 +12,7 @@ namespace MagicNote.Client.ViewModels.Interfaces
 
 		Task<PlanDetails> AnalyzeNoteAsync(string? token, string? note);
 
-		Task SubmitPlanAsync(PlanDetails request);
+		Task SubmitPlanAsync(string? token, PlanDetails request);
 
 	}
 }

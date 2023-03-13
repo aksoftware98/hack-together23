@@ -30,9 +30,11 @@
                    HorizontalAlignment="Center"
                    Margin="4"/>
         
-        <Button Content="Submit another note?"
+        <Button Content="Submit another note"
                 HorizontalAlignment="Center"
                 Margin="10"
+                FontSize="16"
+                Padding="30, 8"
                 Style="{ThemeResource ButtonRevealStyle}"
                 Command="{x:Bind ViewModel.NavigateToPlanningPageCommand}" />
     </StackPanel>

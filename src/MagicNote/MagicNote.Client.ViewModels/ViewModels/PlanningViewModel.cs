@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using MagicNote.Client.ViewModels.Interfaces;
 using MagicNote.Client.ViewModels.Models;
+using MagicNote.Shared.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,8 +45,8 @@ namespace MagicNote.Client.ViewModels
 				return;
 
 			IsBusy = true;
-			var plan = await _planningClient.AnalyzeNoteAsync(_user?.AccessToken, Note);
-			await Task.Delay(2500);
+			var plan = await _planningClient.AnalyzeNoteAsync(_user.AccessToken, Note);
+			
 			Plan = new(plan);
 			
 			IsPlanSubmitted = true;
@@ -56,12 +57,37 @@ namespace MagicNote.Client.ViewModels
 		private async Task SubmitPlanAsync()
 		{
 			// TODO: Validate the plan client-side 
+			if (Plan == null)
+				return;
 			IsBusy = true;
 
-			//await _planningClient.SubmitPlanAsync(new());
-			await Task.Delay(4000);
+			var planRequest = BuildRequestObject();
+			await _planningClient.SubmitPlanAsync(_user.AccessToken, planRequest);
+
 			_navigation.NavigateTo("PlanSubmittedPage");
 			IsBusy = false;
+		}
+
+		private PlanDetails BuildRequestObject()
+		{
+			return new()
+			{
+				Items = Plan.Items.Select(p => new PlanItem
+				{
+					Type = p.Type,
+					EndTime = p.EndTime,
+					StartTime = p.StartTime,
+					Title = p.Title,
+					People = p.Contacts?.Select(c => new MeetingPerson()
+					{
+						Email = c.Email,
+						Name = c.DisplayName,
+						AddContact = c.AddContact,
+						AddEmailToContact = c.UpdateEmail,
+						Id = c.Id
+					}) ?? Enumerable.Empty<MeetingPerson>()
+				})
+			};
 		}
 	}
 }

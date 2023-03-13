@@ -1,6 +1,7 @@
 using MagicNote.Core;
 using MagicNote.Core.Interfaces;
 using MagicNote.Shared;
+using MagicNote.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 
@@ -37,14 +38,22 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/submit-note", async ([FromBody]SubmitNoteRequest note, IPlanningService planningService) =>
+app.MapPost("/analyze-note", async ([FromBody]SubmitNoteRequest note, IPlanningService planningService) =>
 {
 	var result = await planningService.AnalyzeNoteAsync(note);
 	return Results.Ok(result);
 })
-	.WithName("Submit Note")
+	.WithName("Analyze Note")
 	.WithDescription("Submit a note to be analyzed by AI and return a plan object of the graph services to be done")
 	.WithOpenApi();
 
+app.MapPost("/submit-plan", async ([FromBody] PlanDetails plan, IPlanningService planningService) =>
+{
+	await planningService.SubmitPlanAsync(plan);
+	return Results.Ok();
+})
+	.WithName("Submit Plan")
+	.WithDescription("Submit a plan so the planned items inside it can be created via the Microsoft Graph")
+	.WithOpenApi();
 
 app.Run();

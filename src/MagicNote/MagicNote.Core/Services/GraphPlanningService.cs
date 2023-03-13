@@ -33,9 +33,13 @@ namespace MagicNote.Core.Services
 			// TODO: Refactor and clean up the code
 			var items = new List<PlanItem>();
 			// 1- Divide the note into sentences 
-			var sentences = note.Query.Split("\r\n");
+			note.Query = note.Query
+								.Replace(",", "\r")
+								.Replace(".", "\r")
+								.Replace(";", "\r");
+			var sentences = note.Query.Split(new[] { "\r\n", "\r" }, StringSplitOptions.None);
 			// 2- Analyze each sentence and get the intent
-			foreach (var sentence in sentences)
+			foreach (var sentence in sentences.Where(s => !string.IsNullOrWhiteSpace(s)))
 			{
 				var analyzeResponse = await _language.AnalyzeTextAsync(sentence);
 				var analyzeResult = analyzeResponse.Result;
@@ -168,7 +172,7 @@ namespace MagicNote.Core.Services
 
 		public Task SubmitPlanAsync(PlanDetails plan)
 		{
-			throw new NotImplementedException();
+			return Task.CompletedTask;
 		}
 	}
 }

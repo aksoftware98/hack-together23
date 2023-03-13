@@ -1,80 +1,59 @@
-﻿using MagicNote.Client.ViewModels.Interfaces;
+﻿using MagicNote.Client.ViewModels.Exceptions;
+using MagicNote.Client.ViewModels.Interfaces;
 using MagicNote.Shared.DTOs;
+using MagicNote.Shared.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MagicNote.Client.ViewModels.Services
 {
+	// TODO: Refactor the code of Http request and use a global user object instead of passing the token excplicityly as below
 	public class HttpPlanningClient : IPlanningClient
 	{
 		
-		public Task<PlanDetails> AnalyzeNoteAsync(string token, string note)
+		public async Task<PlanDetails> AnalyzeNoteAsync(string token, string note)
 		{
 			if (string.IsNullOrWhiteSpace(note))
 				throw new ArgumentNullException(nameof(note));
 
-			var jsonText = """
-				{
-    "items": [
-        {
-            "type": 0,
-            "title": "Buy some stationary",
-            "startTime": "2023-03-13T21:00:00",
-            "endTime": "2023-03-13T22:00:00",
-            "people": []
-        },
-        {
-            "type": 0,
-            "title": "Play football",
-            "startTime": "2023-03-13T19:00:00",
-            "endTime": "2023-03-13T20:00:00",
-            "people": []
-        },
-        {
-            "type": 2,
-            "title": "Study some Azure",
-            "startTime": null,
-            "endTime": null,
-            "people": []
-        },
-        {
-            "type": 1,
-            "title": "Talk to Julio",
-            "startTime": "2023-03-13T20:30:00",
-            "endTime": "2023-03-13T21:30:00",
-            "people": [
-                {
-                    "id": null,
-                    "name": "Julio",
-                    "email": null,
-                    "addEmailToContact": true,
-                    "addContact": true,
-                    "addContactEnabled": true
-                },
-                {
-                    "id": "AQMkADAwATY0MDABLWU3ZTItMDY5NC0wMAItMDAKAEYAAANJ3szxihH5SrT8gftvFZ7MBwCdIsSQqxPRTpRxjiXL8C6UAAACAQ4AAACdIsSQqxPRTpRxjiXL8C6UAAY21TqcAAAA",
-                    "name": "John Smith",
-                    "email": "aksoftware19981998@gmail.com",
-                    "addEmailToContact": false,
-                    "addContact": false,
-                    "addContactEnabled": false
-                }
-            ]
-        }
-    ]
-}
-""";
+			using var client = new HttpClient();
+			client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            return Task.FromResult(JsonSerializer.Deserialize<PlanDetails>(jsonText));
+			var response = await client.PostAsJsonAsync("https://localhost:7210/analyze-note", new
+			{
+				query = note
+			});
+
+			if (response.IsSuccessStatusCode)
+			{
+				var result = await response.Content.ReadFromJsonAsync<PlanDetails>();
+				return result ?? new(); 
+			}
+			else
+			{
+				var error = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+				throw new ApiException(error);
+			}
 		}
 
-		public Task SubmitPlanAsync(PlanDetails request)
+		public async Task SubmitPlanAsync(string? token, PlanDetails request)
 		{
-			throw new NotImplementedException();
+
+			using var client = new HttpClient();
+			client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+			var response = await client.PostAsJsonAsync("https://localhost:7210/submit-plan", request);
+
+			if (!response.IsSuccessStatusCode)
+			{ 
+				var error = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+				throw new ApiException(error);
+			}
 		}
 	}
 }
