@@ -68,11 +68,11 @@ Following is the table of the tasks I want to get done for the hackathon and for
 | :white_check_mark: | Having AI models supprot understanding (tasks, meetings, and events) | Hackathon |
 | :white_check_mark: | Integrate with Microsoft Graph for (tasks, calendar events, and contacts) | Hackathon |
 | :white_check_mark: | Release the basic version of WinUI project for Windows 10, 11 | Hackathon |
-| :white_square_button: | Release the basic version of the MAUI project to run on Microsoft Surface Duo | hackathon | 
+| :white_square_button: | Release the basic version of the MAUI project to run on Microsoft Surface Duo | Hackathon | 
 | :white_square_button: | Implement efficient validation for the request (client and server side) | Hackathon |
 | :white_square_button: | Refactor the code of the analyzing logic on the server | Hackathon |
 | :white_square_button: | Support Sign-Out | v1 public |
 | :white_square_button: | Add voice recognition to fill out the note instead of writing | v1 public |
 | :white_square_button: | Add text extraction from image to support users who prefer writing on paper | v1 public |
 
-*** The target of the project for the hackathon to be fully available and functional is March 14, 2023
+** The target of the project for the hackathon to be fully available and functional is March 14, 2023 **
