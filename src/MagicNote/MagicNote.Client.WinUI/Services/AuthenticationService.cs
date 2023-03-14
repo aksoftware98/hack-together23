@@ -14,7 +14,7 @@ namespace MagicNote.Client.WinUI.Services
 	{
 
 
-		private static string[] Scopes = new string[] { "user.read", "Calendars.ReadWrite", "Tasks.ReadWrite", "Contacts.ReadWrite" };
+		private static string[] Scopes = new string[] { "user.read", "Calendars.ReadWrite", "Tasks.ReadWrite", "Contacts.ReadWrite", "MailboxSettings.Read" };
 		private const string ClientId = "ec137e7d-ceb1-453a-bb59-65dc4be40822";
 		private const string Tenant = "common";
 		private const string Authority = "https://login.microsoftonline.com/" + Tenant;

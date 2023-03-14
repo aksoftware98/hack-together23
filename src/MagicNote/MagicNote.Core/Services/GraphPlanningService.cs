@@ -7,8 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MagicNote.Core.Services
@@ -19,12 +21,14 @@ namespace MagicNote.Core.Services
 
 		private readonly ILanguageUnderstnadingService _language;
 		private readonly GraphServiceClient _graph;
-
+		private readonly HttpClient _httpClient;
 		public GraphPlanningService(ILanguageUnderstnadingService language,
-									GraphServiceClient graph)
+									GraphServiceClient graph,
+									HttpClient httpClient)
 		{
 			_language = language;
 			_graph = graph;
+			_httpClient = httpClient;
 		}
 
 		/// <summary>
@@ -196,7 +200,7 @@ namespace MagicNote.Core.Services
 			TodoTaskListCollectionResponse? plannedListResults = null;
 			try
 			{
-				plannedListResults  = await _graph.Me
+				plannedListResults = await _graph.Me
 										.Todo
 										.Lists
 										.GetAsync(config =>
@@ -208,7 +212,9 @@ namespace MagicNote.Core.Services
 			{
 
 			}
-			
+
+			var usertimeZone = await GetUserTimeZoneAsync();
+
 			var plannedList = plannedListResults?.Value?.FirstOrDefault();
 
 			// Build the batch requests
@@ -321,5 +327,33 @@ namespace MagicNote.Core.Services
 			else
 				return text.Substring(0, 1).ToUpper() + text.Substring(1);
 		}
+
+		/// <summary>
+		/// Retrieve the user timezone from the mailbox settings 
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="Exception"></exception>
+		private async Task<string> GetUserTimeZoneAsync()
+		{
+			var response = await _httpClient.GetAsync("https://graph.microsoft.com/v1.0/me/mailboxsettings/timeZone");
+
+			if (response.IsSuccessStatusCode)
+			{
+				var result = await response.Content.ReadFromJsonAsync<TimeZoneResponse>();
+				return result?.Value ?? "UTC"; 
+			}
+			else
+			{
+				// Manage a better error handling 
+				throw new Exception("Error getting user time zone");
+			}
+			
+		}
+	}
+
+	internal class TimeZoneResponse
+	{
+		[JsonPropertyName("value")]
+		public string? Value { get; set; }
 	}
 }

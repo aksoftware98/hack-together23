@@ -9,21 +9,16 @@ using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLanguageUnderstandingService(builder.Configuration["LanguageServiceApiKey"] ?? string.Empty);
-builder.Services.AddSingleton(sp => new HttpClient());
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddPlanningService();
-builder.Services.AddSingleton(sp =>
-{
-	var context = sp.GetRequiredService<IHttpContextAccessor>();
-	var token = context.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
-	return new Microsoft.Graph.GraphServiceClient(new BaseBearerTokenAuthenticationProvider(new TokenProvider(() => Task.FromResult(token))));
-});
+// Add the Graph service client and an authorized HttpClient 
+builder.Services.AddAuthorizedHttpClient();
+builder.Services.AddGraphServiceClient(); 
 
 var app = builder.Build();
 
