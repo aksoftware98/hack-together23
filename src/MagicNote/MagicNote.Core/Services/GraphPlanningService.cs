@@ -2,21 +2,25 @@
 using MagicNote.Shared;
 using MagicNote.Shared.DTOs;
 using Microsoft.Graph;
+using Microsoft.Graph.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MagicNote.Core.Services
 {
+	// TODO: Handle the date of the customer timezone 
 	public class GraphPlanningService : IPlanningService
 	{
 
 		private readonly ILanguageUnderstnadingService _language;
 		private readonly GraphServiceClient _graph;
 
-		public GraphPlanningService(ILanguageUnderstnadingService language, 
+		public GraphPlanningService(ILanguageUnderstnadingService language,
 									GraphServiceClient graph)
 		{
 			_language = language;
@@ -45,7 +49,7 @@ namespace MagicNote.Core.Services
 				var analyzeResult = analyzeResponse.Result;
 				if (analyzeResult?.Prediction?.TopIntent?.Equals("None") ?? false)
 					continue;
-				
+
 				var entityType = analyzeResult?.Prediction?.TopIntent switch
 				{
 					"AddReminder" => PlanEntityType.Event,
@@ -88,32 +92,36 @@ namespace MagicNote.Core.Services
 							// Get the entity
 							var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
 							var eventTime = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Time"));
-							var timeDataType = eventTime.Resolutions.FirstOrDefault();
+							var timeDataType = eventTime?.Resolutions?.FirstOrDefault();
 							DateTime startTime = DateTime.Now.AddDays(1);
-							if (timeDataType.DateTimeSubKind.Equals("Date"))
+							if (eventTime != null)
 							{
-								startTime = DateTime.ParseExact($"{note.Date:yyyy-MM-dd} {timeDataType.Value}", "yyyy-MM-dd HH:mm:ss", null);
-							}
-							else if (timeDataType.DateTimeSubKind.Equals("DateTime"))
-							{
-								startTime = DateTime.ParseExact(timeDataType.Value, "yyyy-MM-dd HH:mm:ss", null);
+								if (timeDataType.DateTimeSubKind.Equals("Date"))
+								{
+									startTime = DateTime.ParseExact($"{note.Date:yyyy-MM-dd} {timeDataType.Value}", "yyyy-MM-dd HH:mm:ss", null);
+								}
+								else if (timeDataType.DateTimeSubKind.Equals("DateTime"))
+								{
+									startTime = DateTime.ParseExact(timeDataType.Value, "yyyy-MM-dd HH:mm:ss", null);
+								}
 							}
 							DateTime endTime = startTime.AddHours(1);
 
-							var meetingPeople = new List<MeetingPerson>(); 
+							var meetingPeople = new List<MeetingPerson>();
 							var people = analyzeResult?.Prediction?.Entities?.Where(e => e.Category.Equals("Person"));
 							var contactsFilter = string.Join(" or ", people.Select(p => $"contains(displayName, '{p.Text}')"));
 							var userEntities = (await _graph
 														.Me
 														.Contacts
-														.Request()
-														.Select("id,displayName,emailAddresses")
-														.Filter(contactsFilter)
-														.GetAsync());
+														.GetAsync(config =>
+														{
+															config.QueryParameters.Filter = contactsFilter;
+															config.QueryParameters.Select = new[] { "id", "displayName", "emailAddresses" };
+														}));
 
 							foreach (var person in people)
 							{
-								var user = userEntities.FirstOrDefault(u => u.DisplayName.Contains(person.Text));
+								var user = userEntities?.Value?.FirstOrDefault(u => u.DisplayName.Contains(person.Text));
 								if (user != null)
 								{
 									meetingPeople.Add(new MeetingPerson()
@@ -133,7 +141,7 @@ namespace MagicNote.Core.Services
 										AddEmailToContact = true,
 									});
 							}
-							
+
 							var planItem = new PlanItem()
 							{
 								Title = CapitilizeFirstLetter(eventDescription?.Text) ?? $"Meeting with {string.Join(",", people.Select(p => p.Text))}",
@@ -148,11 +156,15 @@ namespace MagicNote.Core.Services
 					case PlanEntityType.ToDoItem:
 						{
 							// Get the entity
+							string title = sentence;
 							var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
-							
+
+							if (eventDescription != null)
+								title = CapitilizeFirstLetter(eventDescription.Text);
+
 							var planItem = new PlanItem()
 							{
-								Title = CapitilizeFirstLetter(eventDescription.Text),
+								Title = title,
 								Type = entityType,
 							};
 							items.Add(planItem);
@@ -161,7 +173,7 @@ namespace MagicNote.Core.Services
 					default:
 						continue;
 				}
-				
+
 			}
 
 			return new PlanDetails
@@ -170,9 +182,134 @@ namespace MagicNote.Core.Services
 			};
 		}
 
-		public Task SubmitPlanAsync(PlanDetails plan)
+		public async Task SubmitPlanAsync(PlanDetails plan)
 		{
-			return Task.CompletedTask;
+			var json = JsonSerializer.Serialize(plan);
+			ArgumentNullException.ThrowIfNull(plan);
+
+			var tomorrow = DateTime.Now.AddDays(1);
+			var year = tomorrow.Year;
+			var month = tomorrow.Month;
+			var day = tomorrow.Day;
+
+			// Get the planned list of the to-do list
+			TodoTaskListCollectionResponse? plannedListResults = null;
+			try
+			{
+				plannedListResults  = await _graph.Me
+										.Todo
+										.Lists
+										.GetAsync(config =>
+										{
+											config.QueryParameters.Filter = $"displayName eq 'Tasks'";
+										});
+			}
+			catch (Exception ex)
+			{
+
+			}
+			
+			var plannedList = plannedListResults?.Value?.FirstOrDefault();
+
+			// Build the batch requests
+			var batchReqeustContent = new BatchRequestContent(_graph);
+
+			// Check the to-do items in the request 
+			var items = plan.Items.Where(i => i.Type == PlanEntityType.ToDoItem);
+
+			if (items.Any())
+			{
+				foreach (var item in items)
+				{
+					var todoItem = new TodoTask
+					{
+						Title = item.Title,
+						DueDateTime = new DateTimeTimeZone()
+						{
+							DateTime = tomorrow.ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
+							TimeZone = "Asia/Dubai"
+						}
+					};
+					var todoItemRequest = _graph
+											.Me
+											.Todo
+											.Lists[plannedList?.Id]
+											.Tasks
+											.ToPostRequestInformation(todoItem);
+					await batchReqeustContent.AddBatchRequestStepAsync(todoItemRequest);
+				}
+			}
+
+			// Check if there is meetings in the call 
+			var meetings = plan.Items.Where(i => i.Type == PlanEntityType.Meeting);
+			if (meetings.Any())
+			{
+				foreach (var item in meetings)
+				{
+					var calendarMeeting = new Event
+					{
+						Subject = item.Title,
+						Start = new DateTimeTimeZone
+						{
+							DateTime = new DateTime(year, month, day, item.StartTime.Value.Hour, item.StartTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
+							TimeZone = "Asia/Dubai"
+						},
+						End = new DateTimeTimeZone
+						{
+							DateTime = new DateTime(year, month, day, item.EndTime.Value.Hour, item.EndTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
+							TimeZone = "Asia/Dubai"
+						},
+						IsOnlineMeeting = true,
+						Attendees = item.People.Select(p => new Attendee
+						{
+							EmailAddress = new EmailAddress
+							{
+								Address = p.Email,
+								Name = p.Name
+							}
+						}).ToList()
+					};
+
+					var calendarEventRequest = _graph
+												.Me
+												.Events
+												.ToPostRequestInformation(calendarMeeting);
+
+					await batchReqeustContent.AddBatchRequestStepAsync(calendarEventRequest);
+				}
+			}
+
+			// Check if there is meetings in the call 
+			var events = plan.Items.Where(i => i.Type == PlanEntityType.Event);
+			if (events.Any())
+			{
+				foreach (var item in events)
+				{
+					var calendarEvent = new Event
+					{
+						Subject = item.Title,
+						Start = new DateTimeTimeZone
+						{
+							DateTime = new DateTime(year, month, day, item.StartTime.Value.Hour, item.StartTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
+							TimeZone = "Asia/Dubai"
+						},
+						End = new DateTimeTimeZone
+						{
+							DateTime = new DateTime(year, month, day, item.EndTime.Value.Hour, item.EndTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
+							TimeZone = "Asia/Dubai"
+						}
+					};
+
+					var calendarEventRequest = _graph
+												.Me
+												.Events
+												.ToPostRequestInformation(calendarEvent);
+
+					await batchReqeustContent.AddBatchRequestStepAsync(calendarEventRequest);
+				}
+			}
+
+			await _graph.Batch.PostAsync(batchReqeustContent);
 		}
 
 		private string CapitilizeFirstLetter(string text)

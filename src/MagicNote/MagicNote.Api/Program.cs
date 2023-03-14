@@ -1,8 +1,10 @@
+using MagicNote.Api.Extensions;
 using MagicNote.Core;
 using MagicNote.Core.Interfaces;
 using MagicNote.Shared;
 using MagicNote.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Kiota.Abstractions.Authentication;
 using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,13 +20,9 @@ builder.Services.AddPlanningService();
 builder.Services.AddSingleton(sp =>
 {
 	var context = sp.GetRequiredService<IHttpContextAccessor>();
-	var token = context.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer", "");
+	var token = context.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
-	return new Microsoft.Graph.GraphServiceClient(new Microsoft.Graph.DelegateAuthenticationProvider((requestMessage) =>
-	{
-		requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-		return Task.FromResult(0);
-	}));
+	return new Microsoft.Graph.GraphServiceClient(new BaseBearerTokenAuthenticationProvider(new TokenProvider(() => Task.FromResult(token))));
 });
 
 var app = builder.Build();
