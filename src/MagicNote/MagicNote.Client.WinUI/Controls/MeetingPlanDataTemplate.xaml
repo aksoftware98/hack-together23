@@ -169,7 +169,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <PersonPicture DisplayName="Julio Espinosa"
+                                    <PersonPicture DisplayName="{Binding DisplayName}"
                                                                    Grid.Column="0" 
                                                                    Width="45"
                                                                    Height="45"
