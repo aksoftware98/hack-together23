@@ -34,19 +34,26 @@
                            Text="To Do Task"
                            Style="{ThemeResource BaseTextBlockStyle}"
                            Margin="12,6,0,0"/>
-                <TextBlock  Grid.Column="1"
-                            Grid.Row="1"
+
+                <StackPanel Grid.Column="1"
+                            Grid.Row="1">
+                    <TextBlock 
                             Text="{Binding Title}"
                             Style="{ThemeResource BodyTextBlockStyle}"
                              Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}"
                             Margin="12,0,0,6"/>
 
-                <TextBox Grid.Column="1"
+                    <TextBox Grid.Column="1"
                          Grid.Row="1"
                          Text="{Binding Title, Mode=TwoWay}"
                          Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}"
                          Margin="12,0,0,6"/>
 
+                    <Border Background="Red" Padding="5" CornerRadius="4"
+                            Visibility="{Binding ErrorMessage, Converter={StaticResource EmptyStringToVisibilityConverter}}">
+                        <TextBlock Foreground="White" Text="{Binding ErrorMessage}" />
+                    </Border>
+                </StackPanel>
                 <!-- Action Buttons -->
                 <StackPanel Orientation="Horizontal"
                             Grid.Column="1"

@@ -44,12 +44,20 @@ namespace MagicNote.Client.ViewModels
 			}
 		}
 
+		private string _existingTitle = string.Empty;
+		private DateTime? _existingStartTime = null;
+		private DateTime? _existingEndTime = null;
+		
+
 		[RelayCommand]
 		private void SubmitChanges()
 		{
-			if (string.IsNullOrWhiteSpace(Title))
-				ErrorMessage = "Title is required";
-
+			var validationResult = ValidateContent();
+			if (!validationResult)
+			{
+				return;
+			}
+			ErrorMessage = string.Empty;
 			IsEditMode = false;
 		}
 
@@ -57,12 +65,16 @@ namespace MagicNote.Client.ViewModels
 		private void CancelEdit()
 		{
 			IsEditMode = false;
+			ResetConent();
 		}
 
 		[RelayCommand]
 		private void Edit()
 		{
 			IsEditMode = true;
+			_existingEndTime = EndTime;
+			_existingStartTime = StartTime;
+			_existingTitle = Title;
 		}
 
 		[RelayCommand]
@@ -93,6 +105,49 @@ namespace MagicNote.Client.ViewModels
 			EndTime = item.EndTime;
 			Contacts = item.People == null ? null : new(item.People.Select(p => new ContactViewModel(p, DeleteContact)));
 			Type = item.Type;
+		}
+
+		private bool ValidateContent()
+		{
+			if (string.IsNullOrWhiteSpace(Title))
+			{
+				ErrorMessage = "Title is required";
+				return false;
+			}
+
+			if (Type == PlanEntityType.Meeting || Type == PlanEntityType.Event)
+			{
+				if (EndTime <= StartTime)
+				{
+					ErrorMessage = "End time must be greater than start time";
+					return false;
+				}
+			}
+
+			if (Type == PlanEntityType.Meeting)
+			{
+				if (Contacts == null || Contacts.Count == 0)
+				{
+					ErrorMessage = "Meeting must have at least one attendee";
+					return false;
+				}
+
+				var hasInvalidContact = Contacts.Any(c => string.IsNullOrWhiteSpace(c.DisplayName) && string.IsNullOrWhiteSpace(c.Email));
+				if (hasInvalidContact)
+				{
+					ErrorMessage = "Contact must have a name or valid email address";
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		private void ResetConent()
+		{
+			Title = _existingTitle;
+			StartTime = _existingStartTime;
+			EndTime = _existingEndTime;
 		}
 	}
 }

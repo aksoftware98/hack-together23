@@ -24,6 +24,7 @@
             <converters:DateTimeToTimeSpanConverter x:Key="DateTimeToTimespanConverter" />
             <converters:DateTimeToTimeStringConverter x:Key="DateTimeToTimeStringConverter" />
             <converters:EmptyEmailToStringConverter x:Key="EmptyEmailToStringConverter" />
+            <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -32,7 +32,9 @@ namespace MagicNote.Client.WinUI.Pages
 		public LoginPage()
 		{
 			this.InitializeComponent();
-			DataContext = _viewModel = new LoginViewModel(new AuthenticationService(), App.NavigationService);
+			DataContext = _viewModel = new LoginViewModel(new AuthenticationService(), 
+														  App.NavigationService, 
+														  new MessageDialogService(this));
 			_viewModel.OnLoginUserSuccessfully += OnLoginUserSuccessfully;
 		}
 

@@ -11,7 +11,7 @@ namespace MagicNote.Client.ViewModels
 	public partial class ContactViewModel : ObservableObject
 	{
 
-		private MeetingPerson _person; 
+		private MeetingPerson _person;
 
 		[ObservableProperty]
 		private string? _id;
@@ -38,14 +38,20 @@ namespace MagicNote.Client.ViewModels
 		private bool _isDeleteAllowed = true;
 
 		[ObservableProperty]
-		private bool _isValidEmail = false; 
+		private bool _isValidEmail = false;
 
 		public Action<ContactViewModel> DeleteItemAction { get; set; }
-		
+
+		private string? _existingDisplayName;
+		private string? _existingEmail;
+
 		[RelayCommand]
 		private void SaveChanges()
 		{
-			IsValidEmail = !string.IsNullOrWhiteSpace(Email);
+			var validationResult = ValidateContent();
+			if (!validationResult)
+				return;
+			ErrorMessage = string.Empty;
 			IsEditMode = false;
 		}
 
@@ -53,12 +59,15 @@ namespace MagicNote.Client.ViewModels
 		private void CancelEdit()
 		{
 			IsEditMode = false;
+			ResetContent();
 		}
 
 		[RelayCommand]
 		private void Edit()
 		{
 			IsEditMode = true;
+			_existingDisplayName = DisplayName;
+			_existingEmail = Email;
 		}
 
 		[RelayCommand]
@@ -66,7 +75,7 @@ namespace MagicNote.Client.ViewModels
 		{
 			DeleteItemAction(this);
 		}
-		
+
 		public ContactViewModel(MeetingPerson person, Action<ContactViewModel> deleteAction)
 		{
 			_person = person;
@@ -77,6 +86,23 @@ namespace MagicNote.Client.ViewModels
 			AddContact = true;
 			UpdateEmail = person.AddEmailToContact;
 			IsValidEmail = !string.IsNullOrWhiteSpace(Email);
+		}
+
+		private bool ValidateContent()
+		{
+			if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(DisplayName))
+			{
+				ErrorMessage = "Email or name is required";
+				return false;
+			}
+
+			return true;
+		}
+
+		private void ResetContent()
+		{
+			DisplayName = _existingDisplayName;
+			Email = _existingEmail;
 		}
 	}
 }
