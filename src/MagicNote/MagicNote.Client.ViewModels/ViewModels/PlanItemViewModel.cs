@@ -147,6 +147,7 @@ namespace MagicNote.Client.ViewModels
 
 		private void ResetConent()
 		{
+			ErrorMessage = string.Empty;
 			Title = _existingTitle;
 			StartTime = _existingStartTime;
 			EndTime = _existingEndTime;

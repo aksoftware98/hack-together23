@@ -101,6 +101,7 @@ namespace MagicNote.Client.ViewModels
 
 		private void ResetContent()
 		{
+			ErrorMessage = string.Empty;
 			DisplayName = _existingDisplayName;
 			Email = _existingEmail;
 		}
