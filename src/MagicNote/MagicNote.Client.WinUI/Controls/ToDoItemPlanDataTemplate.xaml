@@ -49,9 +49,10 @@
                          Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}"
                          Margin="12,0,0,6"/>
 
-                    <Border Background="Red" Padding="5" CornerRadius="4"
+                    <Border  Padding="5" CornerRadius="4"
+                            Margin="12, 0"
                             Visibility="{Binding ErrorMessage, Converter={StaticResource EmptyStringToVisibilityConverter}}">
-                        <TextBlock Foreground="White" Text="{Binding ErrorMessage}" />
+                        <TextBlock Foreground="#FFB1B1" FontWeight="Medium" Text="{Binding ErrorMessage}" />
                     </Border>
                 </StackPanel>
                 <!-- Action Buttons -->
@@ -87,7 +88,7 @@
                             Margin="3">
                         <Viewbox Width="12"
                              Height="12">
-                            <SymbolIcon Symbol="Delete" Foreground="PaleVioletRed" />
+                            <SymbolIcon Symbol="Delete" Foreground="Pink" />
                         </Viewbox>
                     </Button>
                 </StackPanel>

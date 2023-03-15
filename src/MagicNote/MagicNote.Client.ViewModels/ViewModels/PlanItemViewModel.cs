@@ -117,7 +117,9 @@ namespace MagicNote.Client.ViewModels
 
 			if (Type == PlanEntityType.Meeting || Type == PlanEntityType.Event)
 			{
-				if (EndTime <= StartTime)
+				var startTimeOnly = TimeOnly.FromDateTime(StartTime.Value);
+				var endTimeOnly = TimeOnly.FromDateTime(EndTime.Value);
+				if (endTimeOnly <= startTimeOnly)
 				{
 					ErrorMessage = "End time must be greater than start time";
 					return false;

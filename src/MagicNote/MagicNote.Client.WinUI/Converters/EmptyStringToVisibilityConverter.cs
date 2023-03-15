@@ -12,7 +12,7 @@ namespace MagicNote.Client.WinUI.Converters
 		public object Convert(object value, Type targetType, object parameter, string language)
 		{
 			var message = (string)value;
-			if (!string.IsNullOrEmpty(message))
+			if (string.IsNullOrEmpty(message))
 				return Microsoft.UI.Xaml.Visibility.Collapsed;
 			return Microsoft.UI.Xaml.Visibility.Visible;
 		}
