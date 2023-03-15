@@ -47,6 +47,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication(); 
 app.UseAuthorization();
 
+#region API Endpoints
 app.MapPost("/analyze-note", async ([FromBody]SubmitNoteRequest note, IPlanningService planningService) =>
 {
 	var result = await planningService.AnalyzeNoteAsync(note);
@@ -64,5 +65,6 @@ app.MapPost("/submit-plan", async ([FromBody] PlanDetails plan, IPlanningService
 	.WithName("Submit Plan")
 	.WithDescription("Submit a plan so the planned items inside it can be created via the Microsoft Graph")
 	.WithOpenApi();
+#endregion 
 
 app.Run();

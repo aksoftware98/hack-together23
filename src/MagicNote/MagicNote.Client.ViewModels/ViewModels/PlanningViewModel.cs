@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MagicNote.Client.ViewModels.Exceptions;
 using MagicNote.Client.ViewModels.Interfaces;
 using MagicNote.Client.ViewModels.Models;
 using MagicNote.Shared.DTOs;
@@ -17,13 +18,16 @@ namespace MagicNote.Client.ViewModels
 		private readonly IPlanningClient _planningClient;
 		private readonly User _user;
 		private readonly INavigationService _navigation;
+		private readonly IMessageDialogService _dialogsService;
 		public PlanningViewModel(IPlanningClient planningClient,
 								 User user,
-								 INavigationService navigation)
+								 INavigationService navigation,
+								 IMessageDialogService dialogsService)
 		{
 			_planningClient = planningClient;
 			_user = user;
 			_navigation = navigation;
+			_dialogsService = dialogsService;
 		}
 
 		#region Proeprties 
@@ -44,12 +48,25 @@ namespace MagicNote.Client.ViewModels
 			if (string.IsNullOrWhiteSpace(Note))
 				return;
 
-			IsBusy = true;
-			var plan = await _planningClient.AnalyzeNoteAsync(_user.AccessToken, Note);
-			
-			Plan = new(plan);
-			
-			IsPlanSubmitted = true;
+			try
+			{
+				IsBusy = true;
+				var plan = await _planningClient.AnalyzeNoteAsync(_user.AccessToken, Note);
+				Plan = new(plan);
+
+				IsPlanSubmitted = true;
+			}
+			catch (ApiException ex)
+			{
+				// TODO: Log the error
+				await _dialogsService.ShowOkDialogAsync("Error", ex.Message);
+			}
+			catch (Exception)
+			{
+				// TODO: Log the error 
+				await _dialogsService.ShowOkDialogAsync("Error", "An error occured while submitting the plan. Please try again later.");
+			}
+
 			IsBusy = false;
 		}
 
@@ -62,10 +79,24 @@ namespace MagicNote.Client.ViewModels
 			IsBusy = true;
 
 			var planRequest = BuildRequestObject();
-			await _planningClient.SubmitPlanAsync(_user.AccessToken, planRequest);
+			try
+			{
+				await _planningClient.SubmitPlanAsync(_user.AccessToken, planRequest);
 
-			_navigation.NavigateTo("PlanSubmittedPage");
+				_navigation.NavigateTo("PlanSubmittedPage");
+			}
+			catch (ApiException ex)
+			{
+				// TODO: Log the error
+				await _dialogsService.ShowOkDialogAsync("Error", ex.Message);
+			}
+			catch (Exception)
+			{
+				// TODO: Log the error 
+				await _dialogsService.ShowOkDialogAsync("Error", "An error occured while submitting the plan. Please try again later.");
+			}
 			IsBusy = false;
+
 		}
 
 		private PlanDetails BuildRequestObject()

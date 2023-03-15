@@ -55,7 +55,6 @@ namespace MagicNote.Client.WinUI
 		public static User User { get; private set; }
 
 		public static event Action<User> OnUserLogsIn = delegate { };
-
 		public static void LoginUser(User user)
 		{
 			User = user;
