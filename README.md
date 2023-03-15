@@ -8,6 +8,12 @@ This project is built to participate in the Microsft's hackathon #Hack_Together
 
 <img src="https://github.com/aksoftware98/hack-together23/blob/main/Assets/MagicNote%20Logo.png" width="150">
 
+GET IT NOW FOR WINDOWS 
+
+[![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/aksoftware98/hack-together23/releases/download/hackathon-release/MagicNote.Client.WinUI_1.1.4.0_HackathonVersion.zip)
+
+[[v1.1.4 Hackathon version for Windows](https://github.com/aksoftware98/hack-together23/releases/tag/hackathon-release)]
+
 
 ## Overview
 Magic Note is an AI-powered application that allows your to plan your day smoothly and quickly without the need to open different apps like the calendar and the To-Do app and insert each of your items one by one. 
