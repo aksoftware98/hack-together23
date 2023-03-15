@@ -83,6 +83,15 @@ Check out the following example:
 
 ![WinUI](https://github.com/aksoftware98/hack-together23/blob/main/Assets/WinUI%20Project%20Overview/Example.png?raw=true)
 
+Type something like this
+``` Text
+Do my daily morning exercise.
+I want to buy some fresh fruits
+I will study for the Azure exam 
+I will play football with the team at 02:25 PM
+Then I will meet John and Daniel to follow up with the progress of the project at 05:00 PM
+
+```
 
 ## How the App Technically Works with Graph API
 
