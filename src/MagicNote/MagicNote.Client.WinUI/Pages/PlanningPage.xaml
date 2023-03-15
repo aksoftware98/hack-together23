@@ -55,6 +55,7 @@
                      IsSpellCheckEnabled="True"
                     Grid.Row="1"
                      FontSize="20"
+                     PlaceholderText="I want to buy fresh fruits. I will play football with the team at 08 PM. I want to call John to dicuss the release of our new project at 04:30 PM"
                      Text="{x:Bind ViewModel.Note, Mode=TwoWay}"
                      Margin="3, 10" />
 
