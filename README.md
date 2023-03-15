@@ -14,7 +14,18 @@ GET IT NOW FOR WINDOWS
 
 [[v1.1.4 Hackathon version for Windows](https://github.com/aksoftware98/hack-together23/releases/tag/hackathon-release)]
 
-
+The article covers the following points:
+- [Magic Note - #Hack\_Together](#magic-note---hack_together)
+  - [Overview](#overview)
+  - [Magic Note Availabitliy](#magic-note-availabitliy)
+  - [What Magic Note solves specifically](#what-magic-note-solves-specifically)
+  - [How Magic Note solved the problem](#how-magic-note-solved-the-problem)
+  - [How you can test](#how-you-can-test)
+  - [How the App Technically Works with Graph API](#how-the-app-technically-works-with-graph-api)
+  - [Current Limtations:](#current-limtations)
+  - [Magic Note Components](#magic-note-components)
+  - [Project Progress \& Goals](#project-progress--goals)
+ 
 ## Overview
 Magic Note is an AI-powered application that allows your to plan your day smoothly and quickly without the need to open different apps like the calendar and the To-Do app and insert each of your items one by one. 
 The app will have a simple text input where you can write all what you want to do for the next day (event, task, or a meeting with someone), after you submit your note, Magic Note with the help of AI and Microsoft Graph will understand the content and build a plan for you to review and make sure it aligns with what in your mind. 
@@ -60,6 +71,18 @@ The writing is quick, with no text fields to fill, no dates to select, and no sa
 Magic Note will send that text to the server, understand its content using AI (SEE BELOW FOR TECHNOLOGY DETAILS), and build a plan out of the ideas inside (creating an event at this time, creating a meeting with a person, adding a to-do item ..etc.). After the server prepares the plan, the user will see a set of cards each representing either an event to be added to the calendar, scheduling a meeting with someone, or adding a to-do item.
 Instead of the user having to open every app (Calendar, Teams, and To-Do) to insert them, the user now has a plan in front and he/she should decide if this is correct and make adjustments if needed. Once the user is satisfied with the plan, click Submit and the Magic Note will use Microsoft Graph to populate all this stuff.
 The user starts the next day with the To-Do app populated, the calendar full of the events and the meeting needed to be done in that day.
+
+## How you can test
+To see the full capabilities of the app, make sure to:
+- Write something general (To-Do Task) like *I will study Azure*,
+- Write something general with time (Calendar event) like *I will play football with my team at 06 PM*
+- Write something for meeting scheduling with a people too (Meeting) liek *I will meet with John and Waddah to dicuss our project progress at 05:30 PM*
+  It will be better if you mention names that you have in your contacts and have emails assigned too, so the person full name and the email will be populated in the plan
+
+Check out the following example: 
+
+![WinUI](https://github.com/aksoftware98/hack-together23/blob/main/Assets/WinUI%20Project%20Overview/Example.png?raw=true)
+
 
 ## How the App Technically Works with Graph API
 
