@@ -1,4 +1,5 @@
 using MagicNote.Api.Extensions;
+using MagicNote.Api.Middlewares;
 using MagicNote.Core;
 using MagicNote.Core.Interfaces;
 using MagicNote.Shared;
@@ -40,7 +41,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ErrorHandlingMiddleware>(); 
 app.UseHttpsRedirection();
 
 app.UseAuthentication(); 
