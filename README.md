@@ -6,6 +6,8 @@ This project is built to participate in the Microsft's hackathon #Hack_Together
 
 [![Build and deploy ASP.Net Core app to an Azure Web App](https://github.com/aksoftware98/hack-together23/actions/workflows/azure-webapps-dotnet-core.yml/badge.svg)](https://github.com/aksoftware98/hack-together23/actions/workflows/azure-webapps-dotnet-core.yml)
 
+![Magic Note - Hack Together](https://github.com/aksoftware98/hack-together23/blob/main/Assets/MagicNote%20Logo.png?raw=true)
+
 ## Overview
 Magic Note is an AI-powered application that allows your to plan your day smoothly and quickly without the need to open different apps like the calendar and the To-Do app and insert each of your items one by one. 
 The app will have a simple text input where you can write all what you want to do for the next day (event, task, or a meeting with someone), after you submit your note, Magic Note with the help of AI and Microsoft Graph will understand the content and build a plan for you to review and make sure it aligns with what in your mind. 
