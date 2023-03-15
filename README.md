@@ -10,7 +10,7 @@ This project is built to participate in the Microsft's hackathon #Hack_Together
 
 GET IT NOW FOR WINDOWS 
 
-[![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/aksoftware98/hack-together23/releases/download/hackathon-release/MagicNote.Client.WinUI_1.1.4.0_HackathonVersion.zip)
+[![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/aksoftware98/hack-together23/releases/tag/hackathon-release)
 
 [[v1.1.4 Hackathon version for Windows](https://github.com/aksoftware98/hack-together23/releases/tag/hackathon-release)]
 
@@ -61,18 +61,10 @@ Magic Note will send that text to the server, understand its content using AI (S
 Instead of the user having to open every app (Calendar, Teams, and To-Do) to insert them, the user now has a plan in front and he/she should decide if this is correct and make adjustments if needed. Once the user is satisfied with the plan, click Submit and the Magic Note will use Microsoft Graph to populate all this stuff.
 The user starts the next day with the To-Do app populated, the calendar full of the events and the meeting needed to be done in that day.
 
-## Magic Note Components
-Technologies Used
-Because this Hackathon is for fun, learning, and everything Microsoft and because I'm the biggest Microsoft fan ever. I decided to build this demo strictly for MICROSOFT PEOPLE (Users and Developers) 😂😎
-The is built with .NET and Azure and divided into the following:
+## How the App Technically Works with Graph API
 
-- Client-side desktop: WinUI app for Windows 10 & 11
-- Client-side mobile: .NET MAUI app for Android only and for Microsoft Surface Duo specifically (The app suits the two screens approached perfectly, write on the left and see the plan on the right)
-- Server-side: Set of ASP.NET Core Minimal API
-- Microsoft Graph API
-- For language understanding AI: I used Azure Conversation Language Service
+![Magic note technical diagram](https://github.com/aksoftware98/hack-together23/blob/main/Assets/Diagrams/graph%20usage.drawio.svg)
 
-## What is the role of Microsoft Graph in Magic Note
 Microsoft Graph API which is the core of the #HackTogether hackathon is used as a main component in the system. 
 Majority of the users wordside use Microsoft account to manage their meetings, events, store the contacts, and keep tracking of their progress using *Microsoft To-Do* but the process of adding those resources through this app on a daily bases and in a consistent fashion is tough. 
 So, how Magic Note is utilizing Graph to make people more productive?
@@ -85,6 +77,23 @@ So, how Magic Note is utilizing Graph to make people more productive?
     - Group all the reqeusts to add the meetings in the batch
     - Group all the reqeusts to submit the events in the batch
     - Post the batch in a single-request
+
+## Current Limtations: 
+- Token is not yet cached, so login is required everytime you open the Windows app. 
+- Maximum 12 items allowed for this version.
+- The AI models detects the start time of the meeting but not yet the end time. 
+- The app only plans for the next day, soon a date picker will be added or mention the date in the note using AI
+
+## Magic Note Components
+Technologies Used
+Because this Hackathon is for fun, learning, and everything Microsoft and because I'm the biggest Microsoft fan ever. I decided to build this demo strictly for MICROSOFT PEOPLE (Users and Developers) 😂😎
+The is built with .NET and Azure and divided into the following:
+
+- Client-side desktop: WinUI app for Windows 10 & 11
+- Client-side mobile: .NET MAUI app for Android only and for Microsoft Surface Duo specifically (The app suits the two screens approached perfectly, write on the left and see the plan on the right)
+- Server-side: Set of ASP.NET Core Minimal API
+- Microsoft Graph API
+- For language understanding AI: I used Azure Conversation Language Service
 
 ## Project Progress & Goals
 Following is the table of the tasks I want to get done for the hackathon and for the releasing of it after the app is reviewed and want to make it publicly available
