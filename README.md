@@ -66,11 +66,25 @@ Technologies Used
 Because this Hackathon is for fun, learning, and everything Microsoft and because I'm the biggest Microsoft fan ever. I decided to build this demo strictly for MICROSOFT PEOPLE (Users and Developers) 😂😎
 The is built with .NET and Azure and divided into the following:
 
-Client-side desktop: WinUI app for Windows 10 & 11
-Client-side mobile: .NET MAUI app for Android only and for Microsoft Surface Duo specifically (The app suits the two screens approached perfectly, write on the left and see the plan on the right)
-Server-side: Set of ASP.NET Core Minimal API
-Microsoft Graph API
-For language understanding AI: I used Azure Conversation Language Service
+- Client-side desktop: WinUI app for Windows 10 & 11
+- Client-side mobile: .NET MAUI app for Android only and for Microsoft Surface Duo specifically (The app suits the two screens approached perfectly, write on the left and see the plan on the right)
+- Server-side: Set of ASP.NET Core Minimal API
+- Microsoft Graph API
+- For language understanding AI: I used Azure Conversation Language Service
+
+## What is the role of Microsoft Graph in Magic Note
+Microsoft Graph API which is the core of the #HackTogether hackathon is used as a main component in the system. 
+Majority of the users wordside use Microsoft account to manage their meetings, events, store the contacts, and keep tracking of their progress using *Microsoft To-Do* but the process of adding those resources through this app on a daily bases and in a consistent fashion is tough. 
+So, how Magic Note is utilizing Graph to make people more productive?
+1. When the user mention in the note that he/she wants to schedule a meeting and mentions a name, the app during the planning the app is trying to search for the mentioned names in the *Contacts* of the user, and if Graph returns that the name is found, it automatically populates the email and the name in the result. 
+2. After the user reviews the plan and makes sure everything is great, the user clicks *Looks good to me*, then the app is using Graph API to:
+    - Fetch the user timezone
+    - Fetch the *Tasks* list in the user's to-do
+    - Create a batch content
+    - Group all the requests to submit the To-Do items in the batch
+    - Group all the reqeusts to add the meetings in the batch
+    - Group all the reqeusts to submit the events in the batch
+    - Post the batch in a single-request
 
 ## Project Progress & Goals
 Following is the table of the tasks I want to get done for the hackathon and for the releasing of it after the app is reviewed and want to make it publicly available
