@@ -171,7 +171,7 @@ namespace MagicNote.Core.Services
 		#region Helper Methods 
 		private string ConstructMeetingTitle(Models.Entity? eventDescription, IEnumerable<Models.Entity> people)
 		{
-			return !string.IsNullOrWhiteSpace(eventDescription.Text) ? CapitilizeFirstLetter(eventDescription?.Text) : $"Meeting with {string.Join(",", people.Select(p => p.Text))}";
+			return !string.IsNullOrWhiteSpace(eventDescription?.Text) ? CapitilizeFirstLetter(eventDescription?.Text) : $"Meeting with {string.Join(",", people.Select(p => p.Text))}";
 		}
 
 		/// <summary>
