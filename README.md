@@ -62,7 +62,8 @@ Instead of the user having to open every app (Calendar, Teams, and To-Do) to ins
 The user starts the next day with the To-Do app populated, the calendar full of the events and the meeting needed to be done in that day.
 
 ## How the App Technically Works with Graph API
-![Magic note technical diagram](https://github.com/aksoftware98/hack-together23/blob/feature/readme-enhancments/Assets/Diagrams/graph%20usage.drawio.svg?raw=true)
+
+![Magic note technical diagram](https://github.com/aksoftware98/hack-together23/blob/main/Assets/Diagrams/graph%20usage.drawio.svg)
 
 Microsoft Graph API which is the core of the #HackTogether hackathon is used as a main component in the system. 
 Majority of the users wordside use Microsoft account to manage their meetings, events, store the contacts, and keep tracking of their progress using *Microsoft To-Do* but the process of adding those resources through this app on a daily bases and in a consistent fashion is tough. 
