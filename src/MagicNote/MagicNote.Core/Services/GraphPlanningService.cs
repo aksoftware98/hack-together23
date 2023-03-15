@@ -1,8 +1,10 @@
 ﻿using MagicNote.Core.Interfaces;
+using MagicNote.Core.Models;
 using MagicNote.Shared;
 using MagicNote.Shared.DTOs;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Microsoft.Kiota.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -30,7 +32,7 @@ namespace MagicNote.Core.Services
 			_graph = graph;
 			_httpClient = httpClient;
 		}
-
+		#region Analyze Note 
 		/// <summary>
 		/// Understand a note using AI and build a productivty plan out of it for user to review and fill the remaining data
 		/// </summary>
@@ -38,146 +40,42 @@ namespace MagicNote.Core.Services
 		/// <returns></returns>
 		public async Task<PlanDetails> AnalyzeNoteAsync(SubmitNoteRequest note)
 		{
-			// TODO: Refactor and clean up the code
 			var items = new List<PlanItem>();
-			// 1- Divide the note into sentences 
-			note.Query = note.Query
-								.Replace(",", "\r")
-								.Replace(".", "\r")
-								.Replace(";", "\r");
-			var sentences = note.Query.Split(new[] { "\r\n", "\r" }, StringSplitOptions.None);
-			// 2- Analyze each sentence and get the intent
-			foreach (var sentence in sentences.Where(s => !string.IsNullOrWhiteSpace(s)))
+
+			string[] sentences = PrepareSentences(note);
+
+			foreach (var sentence in sentences)
 			{
 				var analyzeResponse = await _language.AnalyzeTextAsync(sentence);
 				var analyzeResult = analyzeResponse.Result;
 				if (analyzeResult?.Prediction?.TopIntent?.Equals("None") ?? false)
 					continue;
 
-				var entityType = analyzeResult?.Prediction?.TopIntent switch
-				{
-					"AddReminder" => PlanEntityType.Event,
-					"CreateMeeting" => PlanEntityType.Meeting,
-					"AddToDo" => PlanEntityType.ToDoItem,
-					_ => PlanEntityType.None,
-				};
+				PlanEntityType entityType = ExtractEntityType(analyzeResult);
 
-				// Get the top entity 
 				switch (entityType)
 				{
 					case PlanEntityType.Event:
 						{
-							// Get the entity
-							var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
-							var eventTime = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Time"));
-							var timeDataType = eventTime.Resolutions.FirstOrDefault();
-							DateTime startTime = DateTime.Now.AddDays(1);
-							if (timeDataType.DateTimeSubKind.Equals("Date"))
-							{
-								startTime = DateTime.ParseExact($"{note.Date:yyyy-MM-dd} {timeDataType.Value}", "yyyy-MM-dd HH:mm:ss", null);
-							}
-							else if (timeDataType.DateTimeSubKind.Equals("DateTime"))
-							{
-								startTime = DateTime.ParseExact(timeDataType.Value, "yyyy-MM-dd HH:mm:ss", null);
-							}
-							DateTime endTime = startTime.AddHours(1);
-							var planItem = new PlanItem()
-							{
-								Title = CapitilizeFirstLetter(eventDescription.Text),
-								Type = entityType,
-								StartTime = startTime,
-								EndTime = endTime,
-							};
+							PlanItem planItem = ExtractEventItem(note, analyzeResult);
 							items.Add(planItem);
 							break;
 						}
 					case PlanEntityType.Meeting:
 						{
-							// Get the entity
-							var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
-							var eventTime = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Time"));
-							var timeDataType = eventTime?.Resolutions?.FirstOrDefault();
-							DateTime startTime = DateTime.Now.AddDays(1);
-							if (eventTime != null)
-							{
-								if (timeDataType.DateTimeSubKind.Equals("Date"))
-								{
-									startTime = DateTime.ParseExact($"{note.Date:yyyy-MM-dd} {timeDataType.Value}", "yyyy-MM-dd HH:mm:ss", null);
-								}
-								else if (timeDataType.DateTimeSubKind.Equals("DateTime"))
-								{
-									startTime = DateTime.ParseExact(timeDataType.Value, "yyyy-MM-dd HH:mm:ss", null);
-								}
-							}
-							DateTime endTime = startTime.AddHours(1);
-
-							var meetingPeople = new List<MeetingPerson>();
-							var people = analyzeResult?.Prediction?.Entities?.Where(e => e.Category.Equals("Person"));
-							var contactsFilter = string.Join(" or ", people.Select(p => $"contains(displayName, '{p.Text}')"));
-							var userEntities = (await _graph
-														.Me
-														.Contacts
-														.GetAsync(config =>
-														{
-															config.QueryParameters.Filter = contactsFilter;
-															config.QueryParameters.Select = new[] { "id", "displayName", "emailAddresses" };
-														}));
-
-							foreach (var person in people)
-							{
-								var user = userEntities?.Value?.FirstOrDefault(u => u.DisplayName.Contains(person.Text));
-								if (user != null)
-								{
-									meetingPeople.Add(new MeetingPerson()
-									{
-										Id = user.Id,
-										Email = user.EmailAddresses?.FirstOrDefault()?.Address,
-										Name = user.DisplayName,
-										AddContact = false,
-										AddEmailToContact = false,
-									});
-								}
-								else
-									meetingPeople.Add(new MeetingPerson()
-									{
-										Name = person.Text,
-										AddContact = true,
-										AddEmailToContact = true,
-									});
-							}
-
-							var planItem = new PlanItem()
-							{
-								Title = CapitilizeFirstLetter(eventDescription?.Text) ?? $"Meeting with {string.Join(",", people.Select(p => p.Text))}",
-								Type = entityType,
-								StartTime = startTime,
-								EndTime = endTime,
-								People = meetingPeople
-							};
+							PlanItem planItem = await ExtractMeetingItem(note, analyzeResult);
 							items.Add(planItem);
 							break;
 						}
 					case PlanEntityType.ToDoItem:
 						{
-							// Get the entity
-							string title = sentence;
-							var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
-
-							if (eventDescription != null)
-								title = CapitilizeFirstLetter(eventDescription.Text);
-
-							var planItem = new PlanItem()
-							{
-								Title = title,
-								Type = entityType,
-							};
+							PlanItem planItem = ExtractToDoItem(sentence, analyzeResult);
 							items.Add(planItem);
 							break;
 						}
 					default:
 						continue;
 				}
-
 			}
 
 			return new PlanDetails
@@ -185,137 +83,169 @@ namespace MagicNote.Core.Services
 				Items = items
 			};
 		}
-
-		public async Task SubmitPlanAsync(PlanDetails plan)
+		#region Build To-Do Item 
+		/// <summary>
+		/// Extract a to-do item from the sentence analzying result that has been identified as a to-do item
+		/// </summary>
+		/// <param name="sentence"></param>
+		/// <param name="analyzeResult"></param>
+		/// <returns></returns>
+		private PlanItem ExtractToDoItem(string sentence, PredicationResult? analyzeResult)
 		{
-			var json = JsonSerializer.Serialize(plan);
-			ArgumentNullException.ThrowIfNull(plan);
+			// Get the entity
+			string title = sentence;
+			var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
 
-			var tomorrow = DateTime.Now.AddDays(1);
-			var year = tomorrow.Year;
-			var month = tomorrow.Month;
-			var day = tomorrow.Day;
+			if (eventDescription != null)
+				title = CapitilizeFirstLetter(eventDescription.Text);
 
-			// Get the planned list of the to-do list
-			TodoTaskListCollectionResponse? plannedListResults = null;
-			try
+			var planItem = new PlanItem()
 			{
-				plannedListResults = await _graph.Me
-										.Todo
-										.Lists
-										.GetAsync(config =>
-										{
-											config.QueryParameters.Filter = $"displayName eq 'Tasks'";
-										});
+				Title = title,
+				Type = PlanEntityType.ToDoItem,
+			};
+			return planItem;
+		}
+		#endregion
+
+		#region Build Event Object 
+		/// <summary>
+		/// Extract a event item from the sentence analzying result that has been identified as a event item
+		/// </summary>
+		/// <param name="sentence"></param>
+		/// <param name="analyzeResult"></param>
+		/// <returns></returns>
+		private PlanItem ExtractEventItem(SubmitNoteRequest note, PredicationResult? analyzeResult)
+		{
+			// Get the entity
+			var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
+			DateTime startTime = ExtractStartTimeFromEntities(note, analyzeResult);
+			DateTime endTime = startTime.AddHours(1);
+			var planItem = new PlanItem()
+			{
+				Title = CapitilizeFirstLetter(eventDescription.Text),
+				Type = PlanEntityType.Event,
+				StartTime = startTime,
+				EndTime = endTime,
+			};
+			return planItem;
+		}
+		#endregion
+
+		#region Build Meeting Item
+		/// <summary>
+		/// Building a meeting plan item out of the sentence analzying result that has been identified as a meeting
+		/// </summary>
+		/// <param name="note"></param>
+		/// <param name="analyzeResult"></param>
+		/// <returns></returns>
+		private async Task<PlanItem> ExtractMeetingItem(SubmitNoteRequest note, PredicationResult? analyzeResult)
+		{
+			var eventDescription = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Event"));
+			DateTime startTime = ExtractStartTimeFromEntities(note, analyzeResult);
+			DateTime endTime = startTime.AddHours(1);
+
+			var meetingPeople = new List<MeetingPerson>();
+			var people = analyzeResult?.Prediction?.Entities?.Where(e => e.Category.Equals("Person"));
+			var userEntities = await FetchContactsFromGraphAsync(people);
+
+			foreach (var person in people)
+			{
+				var contact = BuildTheContactObject(meetingPeople, userEntities, person);
+				meetingPeople.Add(contact);
 			}
-			catch (Exception ex)
+
+			var planItem = new PlanItem()
 			{
+				Title = ConstructMeetingTitle(eventDescription, people),
+				Type = PlanEntityType.Meeting,
+				StartTime = startTime,
+				EndTime = endTime,
+				People = meetingPeople
+			};
+			return planItem;
+		}
+		#endregion
 
-			}
+		#region Helper Methods 
+		private string ConstructMeetingTitle(Models.Entity? eventDescription, IEnumerable<Models.Entity> people)
+		{
+			return !string.IsNullOrWhiteSpace(eventDescription.Text) ? CapitilizeFirstLetter(eventDescription?.Text) : $"Meeting with {string.Join(",", people.Select(p => p.Text))}";
+		}
 
-			var usertimeZone = await GetUserTimeZoneAsync();
-
-			var plannedList = plannedListResults?.Value?.FirstOrDefault();
-
-			// Build the batch requests
-			var batchReqeustContent = new BatchRequestContent(_graph);
-
-			// Check the to-do items in the request 
-			var items = plan.Items.Where(i => i.Type == PlanEntityType.ToDoItem);
-
-			if (items.Any())
+		/// <summary>
+		/// Build the <see cref="MeetingPerson" /> object populated with the data from the entities and the result of the contacts retrieved from Graph or build a simple object only from the name available in the sentence
+		/// </summary>
+		/// <param name="meetingPeople"></param>
+		/// <param name="userEntities"></param>
+		/// <param name="person"></param>
+		/// <returns></returns>
+		private static MeetingPerson BuildTheContactObject(List<MeetingPerson> meetingPeople, ContactCollectionResponse? userEntities, Models.Entity? person)
+		{
+			var contact = userEntities?.Value?.FirstOrDefault(u => u.DisplayName.Contains(person.Text));
+			if (contact != null)
 			{
-				foreach (var item in items)
+				return new MeetingPerson()
 				{
-					var todoItem = new TodoTask
-					{
-						Title = item.Title,
-						DueDateTime = new DateTimeTimeZone()
-						{
-							DateTime = tomorrow.ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
-							TimeZone = "Asia/Dubai"
-						}
-					};
-					var todoItemRequest = _graph
-											.Me
-											.Todo
-											.Lists[plannedList?.Id]
-											.Tasks
-											.ToPostRequestInformation(todoItem);
-					await batchReqeustContent.AddBatchRequestStepAsync(todoItemRequest);
+					Id = contact.Id,
+					Email = contact.EmailAddresses?.FirstOrDefault()?.Address,
+					Name = contact.DisplayName,
+					AddContact = false,
+					AddEmailToContact = false,
+				};
+			}
+			else
+				return new MeetingPerson()
+				{
+					Name = person.Text,
+					AddContact = true,
+					AddEmailToContact = true,
+				};
+		}
+
+		private DateTime ExtractStartTimeFromEntities(SubmitNoteRequest note, PredicationResult? analyzeResult)
+		{
+			var eventTime = analyzeResult?.Prediction?.Entities?.FirstOrDefault(e => e.Category.Equals("Time"));
+			var timeDataType = eventTime?.Resolutions?.FirstOrDefault();
+			DateTime startTime = DateTime.Now.AddDays(1);
+			if (timeDataType != null)
+			{
+				if (timeDataType.DateTimeSubKind.Equals("Date"))
+				{
+					startTime = DateTime.ParseExact($"{note.Date:yyyy-MM-dd} {timeDataType.Value}", "yyyy-MM-dd HH:mm:ss", null);
+				}
+				else if (timeDataType.DateTimeSubKind.Equals("DateTime"))
+				{
+					startTime = DateTime.ParseExact(timeDataType.Value, "yyyy-MM-dd HH:mm:ss", null);
 				}
 			}
 
-			// Check if there is meetings in the call 
-			var meetings = plan.Items.Where(i => i.Type == PlanEntityType.Meeting);
-			if (meetings.Any())
+			return startTime;
+		}
+
+
+		private static PlanEntityType ExtractEntityType(PredicationResult? analyzeResult)
+		{
+			return analyzeResult?.Prediction?.TopIntent switch
 			{
-				foreach (var item in meetings)
-				{
-					var calendarMeeting = new Event
-					{
-						Subject = item.Title,
-						Start = new DateTimeTimeZone
-						{
-							DateTime = new DateTime(year, month, day, item.StartTime.Value.Hour, item.StartTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
-							TimeZone = "Asia/Dubai"
-						},
-						End = new DateTimeTimeZone
-						{
-							DateTime = new DateTime(year, month, day, item.EndTime.Value.Hour, item.EndTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
-							TimeZone = "Asia/Dubai"
-						},
-						IsOnlineMeeting = true,
-						Attendees = item.People.Select(p => new Attendee
-						{
-							EmailAddress = new EmailAddress
-							{
-								Address = p.Email,
-								Name = p.Name
-							}
-						}).ToList()
-					};
+				"AddReminder" => PlanEntityType.Event,
+				"CreateMeeting" => PlanEntityType.Meeting,
+				"AddToDo" => PlanEntityType.ToDoItem,
+				_ => PlanEntityType.None,
+			};
+		}
 
-					var calendarEventRequest = _graph
-												.Me
-												.Events
-												.ToPostRequestInformation(calendarMeeting);
-
-					await batchReqeustContent.AddBatchRequestStepAsync(calendarEventRequest);
-				}
-			}
-
-			// Check if there is meetings in the call 
-			var events = plan.Items.Where(i => i.Type == PlanEntityType.Event);
-			if (events.Any())
-			{
-				foreach (var item in events)
-				{
-					var calendarEvent = new Event
-					{
-						Subject = item.Title,
-						Start = new DateTimeTimeZone
-						{
-							DateTime = new DateTime(year, month, day, item.StartTime.Value.Hour, item.StartTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
-							TimeZone = "Asia/Dubai"
-						},
-						End = new DateTimeTimeZone
-						{
-							DateTime = new DateTime(year, month, day, item.EndTime.Value.Hour, item.EndTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
-							TimeZone = "Asia/Dubai"
-						}
-					};
-
-					var calendarEventRequest = _graph
-												.Me
-												.Events
-												.ToPostRequestInformation(calendarEvent);
-
-					await batchReqeustContent.AddBatchRequestStepAsync(calendarEventRequest);
-				}
-			}
-
-			await _graph.Batch.PostAsync(batchReqeustContent);
+		private static string[] PrepareSentences(SubmitNoteRequest note)
+		{
+			note.Query = note.Query
+											.Replace(",", "\r")
+											.Replace(".", "\r")
+											.Replace(";", "\r");
+			var sentences = note.Query
+								.Split(new[] { "\r\n", "\r" }, StringSplitOptions.None)
+								.Where(s => !string.IsNullOrWhiteSpace(s))
+								.ToArray();
+			return sentences;
 		}
 
 		private string CapitilizeFirstLetter(string text)
@@ -327,28 +257,254 @@ namespace MagicNote.Core.Services
 			else
 				return text.Substring(0, 1).ToUpper() + text.Substring(1);
 		}
+		#endregion
+		#endregion
+
+		#region Submit Plan to Graph 
+		public async Task SubmitPlanAsync(PlanDetails plan)
+		{
+			ArgumentNullException.ThrowIfNull(plan);
+
+			// TODO: Validate the plan details object
+
+			// TODO: Remove the limitation of the date from tomorrow to understand it from the AI or allow the user to choose a date before start populating the note
+			var tomorrow = DateTime.Now.AddDays(1);
+			var year = tomorrow.Year;
+			var month = tomorrow.Month;
+			var day = tomorrow.Day;
+
+			// Get the tasks list of the to-do list
+			var tasksList = await GetDefaultTasksListFromGraphAsync();
+			var userTimeZone = await GetUserTimeZoneFromGraphAsync();
+
+			// Build the batch requests
+			var batchReqeustContent = new BatchRequestContent(_graph);
+
+			await BuildToDoItemsGraphRequestsAsync(plan, tomorrow, tasksList, userTimeZone, batchReqeustContent);
+			await BuildMeetingsGraphRequestsAsync(plan, year, month, day, batchReqeustContent);
+			await BuildEventsGraphRequestsAsync(plan, year, month, day, batchReqeustContent);
+
+			await _graph.Batch.PostAsync(batchReqeustContent);
+		}
+
+		#region Graph Calls 
+		private async Task BuildEventsGraphRequestsAsync(PlanDetails plan, int year, int month, int day, BatchRequestContent batchReqeustContent)
+		{
+			// Check if there is meetings in the call 
+			var events = plan.Items.Where(i => i.Type == PlanEntityType.Event);
+			if (events.Any())
+			{
+				foreach (var item in events)
+				{
+					RequestInformation calendarEventRequest = BuildPostEventGraphRequest(year, month, day, item);
+
+					await batchReqeustContent.AddBatchRequestStepAsync(calendarEventRequest);
+				}
+			}
+		}
+
+		private async Task BuildMeetingsGraphRequestsAsync(PlanDetails plan, int year, int month, int day, BatchRequestContent batchReqeustContent)
+		{
+			// Build the events item batch requests 
+			var meetings = plan.Items.Where(i => i.Type == PlanEntityType.Meeting);
+			if (meetings.Any())
+			{
+				foreach (var item in meetings)
+				{
+					var calendarMeetingRequest = BuildPostMeetingGraphRequest(year, month, day, item);
+
+					foreach (var contact in item.People)
+					{
+						if (contact.AddContact && string.IsNullOrWhiteSpace(contact.Id)) // Add the contact to Microsoft Graph if the contact is not added already 
+						{
+							RequestInformation contactRequest = BuildPostContactGraphRequest(contact);
+
+							await batchReqeustContent.AddBatchRequestStepAsync(contactRequest);
+						}
+					}
+
+					await batchReqeustContent.AddBatchRequestStepAsync(calendarMeetingRequest);
+				}
+			}
+		}
+
+		private RequestInformation BuildPostContactGraphRequest(MeetingPerson contact)
+		{
+			var newContact = new Contact
+			{
+				DisplayName = contact.Name,
+				GivenName = contact.Name,
+
+			};
+
+			if (!string.IsNullOrWhiteSpace(contact.Email))
+			{
+				newContact.EmailAddresses = new List<EmailAddress>()
+								{
+									new EmailAddress
+									{
+										Address = contact.Email
+									}
+								};
+			}
+
+			var contactRequest = _graph
+									.Me
+									.Contacts
+									.ToPostRequestInformation(newContact);
+			return contactRequest;
+		}
+
+		private async Task BuildToDoItemsGraphRequestsAsync(PlanDetails plan, DateTime tomorrow, TodoTaskList tasksList, string userTimeZone, BatchRequestContent batchReqeustContent)
+		{
+			// Build the to-do items batch requests 
+			var todoItems = plan.Items.Where(i => i.Type == PlanEntityType.ToDoItem);
+
+			if (todoItems.Any())
+			{
+				foreach (var item in todoItems)
+				{
+					var todoItemRequest = BuildPostToDoItemGraphRequest(tomorrow, tasksList, userTimeZone, item);
+					await batchReqeustContent.AddBatchRequestStepAsync(todoItemRequest);
+				}
+			}
+		}
+
+		private RequestInformation BuildPostEventGraphRequest(int year, int month, int day, PlanItem? item)
+		{
+			var calendarEvent = new Event
+			{
+				Subject = item.Title,
+				Start = new DateTimeTimeZone
+				{
+					DateTime = new DateTime(year, month, day, item.StartTime.Value.Hour, item.StartTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
+					TimeZone = "Asia/Dubai"
+				},
+				End = new DateTimeTimeZone
+				{
+					DateTime = new DateTime(year, month, day, item.EndTime.Value.Hour, item.EndTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
+					TimeZone = "Asia/Dubai"
+				}
+			};
+
+			var calendarEventRequest = _graph
+										.Me
+										.Events
+										.ToPostRequestInformation(calendarEvent);
+			return calendarEventRequest;
+		}
+
+		private RequestInformation BuildPostMeetingGraphRequest(int year, int month, int day, PlanItem? item)
+		{
+			var calendarMeeting = new Event
+			{
+				Subject = item.Title,
+				Start = new DateTimeTimeZone
+				{
+					DateTime = new DateTime(year, month, day, item.StartTime.Value.Hour, item.StartTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
+					TimeZone = "Asia/Dubai"
+				},
+				End = new DateTimeTimeZone
+				{
+					DateTime = new DateTime(year, month, day, item.EndTime.Value.Hour, item.EndTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
+					TimeZone = "Asia/Dubai"
+				},
+				IsOnlineMeeting = true,
+				Attendees = item.People.Select(p => new Attendee
+				{
+					EmailAddress = new EmailAddress
+					{
+						Address = p.Email,
+						Name = p.Name
+					}
+				}).ToList()
+			};
+
+			var calendarEventRequest = _graph
+										.Me
+										.Events
+										.ToPostRequestInformation(calendarMeeting);
+			return calendarEventRequest;
+		}
+
+		private RequestInformation BuildPostToDoItemGraphRequest(DateTime tomorrow, TodoTaskList? tasksList, string userTimeZone, PlanItem? item)
+		{
+			var todoItem = new TodoTask
+			{
+				Title = item.Title,
+				DueDateTime = new DateTimeTimeZone()
+				{
+					DateTime = tomorrow.ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
+					TimeZone = userTimeZone
+				}
+			};
+			var todoItemRequest = _graph
+									.Me
+									.Todo
+									.Lists[tasksList?.Id]
+									.Tasks
+									.ToPostRequestInformation(todoItem);
+			return todoItemRequest;
+		}
+
+		private async Task<TodoTaskList> GetDefaultTasksListFromGraphAsync()
+		{
+			var tasksListResults = await _graph.Me
+												.Todo
+												.Lists
+												.GetAsync(config =>
+												{
+													config.QueryParameters.Filter = $"displayName eq 'Tasks'";
+												});
+			var tasksList = tasksListResults?.Value?.FirstOrDefault();
+			return tasksList;
+		}
+
 
 		/// <summary>
 		/// Retrieve the user timezone from the mailbox settings 
 		/// </summary>
 		/// <returns></returns>
 		/// <exception cref="Exception"></exception>
-		private async Task<string> GetUserTimeZoneAsync()
+		private async Task<string> GetUserTimeZoneFromGraphAsync()
 		{
 			var response = await _httpClient.GetAsync("https://graph.microsoft.com/v1.0/me/mailboxsettings/timeZone");
 
 			if (response.IsSuccessStatusCode)
 			{
 				var result = await response.Content.ReadFromJsonAsync<TimeZoneResponse>();
-				return result?.Value ?? "UTC"; 
+				return result?.Value ?? "UTC";
 			}
 			else
 			{
 				// Manage a better error handling 
 				throw new Exception("Error getting user time zone");
 			}
-			
+
 		}
+		#endregion
+
+		/// <summary>
+		/// Fetch contacts from Microsoft Graphs that the user has mentioned in the sentence. 
+		/// The contacts will help populate the plan with the emails of the contacts that the person has mentioned
+		/// </summary>
+		/// <param name="people">List of people mentioned in the sentence</param>
+		/// <returns></returns>
+		private async Task<ContactCollectionResponse> FetchContactsFromGraphAsync(IEnumerable<Models.Entity>? people)
+		{
+			var contactsFilter = string.Join(" or ", people.Select(p => $"contains(displayName, '{p.Text}')"));
+			var userEntities = (await _graph
+										.Me
+										.Contacts
+										.GetAsync(config =>
+										{
+											config.QueryParameters.Filter = contactsFilter;
+											config.QueryParameters.Select = new[] { "id", "displayName", "emailAddresses" };
+										}));
+			return userEntities;
+		}
+
+		#endregion
 	}
 
 	internal class TimeZoneResponse
