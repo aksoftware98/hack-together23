@@ -9,7 +9,7 @@
   <Identity
     Name="87ad8ffa-ee7c-41b6-816d-7720a2bbb223"
     Publisher="CN=Ahmad Mozaffar"
-    Version="1.1.2.0" />
+    Version="1.1.4.0" />
 
   <Properties>
     <DisplayName>MagicNote</DisplayName>

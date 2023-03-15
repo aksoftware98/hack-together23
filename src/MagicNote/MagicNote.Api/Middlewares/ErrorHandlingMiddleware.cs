@@ -1,4 +1,6 @@
-﻿using MagicNote.Shared.Responses;
+﻿using MagicNote.Core.Exceptions;
+using MagicNote.Shared.Responses;
+using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using System.Text.Json;
 
@@ -35,7 +37,12 @@ namespace MagicNote.Api.Middlewares
 			switch (exception)
 			{
 				// TODO: Handle the other exceptoins properly 
-				case Exception e:
+				case DominException e:
+					logger.LogWarning("Exceeded the 12 items limit");
+					code = HttpStatusCode.BadRequest;
+					result = new ApiErrorResponse(e.Message);
+					break;
+				default:
 					logger.LogError(exception, "SERVER ERROR");
 					code = HttpStatusCode.InternalServerError;
 					result = new ApiErrorResponse("Something went wrong");

@@ -1,4 +1,5 @@
-﻿using MagicNote.Core.Interfaces;
+﻿using MagicNote.Core.Exceptions;
+using MagicNote.Core.Interfaces;
 using MagicNote.Core.Models;
 using MagicNote.Shared;
 using MagicNote.Shared.DTOs;
@@ -266,7 +267,8 @@ namespace MagicNote.Core.Services
 			ArgumentNullException.ThrowIfNull(plan);
 
 			// TODO: Validate the plan details object
-
+			if (plan.Items.Count() > 12)
+				throw new DominException("The free version supports only up to 12 tasks a day");
 			// TODO: Remove the limitation of the date from tomorrow to understand it from the AI or allow the user to choose a date before start populating the note
 			var tomorrow = DateTime.Now.AddDays(1);
 			var year = tomorrow.Year;
