@@ -14,11 +14,15 @@ namespace MagicNote.Client.ViewModels
 
 		private readonly IAuthenticationProvider _authProvider;
 		private readonly INavigationService _navigation;
-		public LoginViewModel(IAuthenticationProvider authProvider, 
-							  INavigationService navigation)
+		private readonly IMessageDialogService _messageDialogService;
+
+		public LoginViewModel(IAuthenticationProvider authProvider,
+							  INavigationService navigation,
+							  IMessageDialogService messageDialogService)
 		{
 			_authProvider = authProvider;
 			_navigation = navigation;
+			_messageDialogService = messageDialogService;
 		}
 
 		public event Action<User> OnLoginUserSuccessfully = delegate { };
@@ -27,9 +31,18 @@ namespace MagicNote.Client.ViewModels
 		private async Task SignInAsync()
         {
 			IsBusy = true;
-			var user = await _authProvider.SignInAsync();
-			OnLoginUserSuccessfully.Invoke(user);
-			_navigation.NavigateTo("PlanningPage");
+			try
+			{
+				var user = await _authProvider.SignInAsync();
+				OnLoginUserSuccessfully.Invoke(user);
+				_navigation.NavigateTo("PlanningPage");
+			}
+			catch (Exception)
+			{
+				// TODO: Log the error 
+				await _messageDialogService.ShowOkDialogAsync("Error", "An error occurred while trying to sign in. Please try again later.");
+			}
+			
 			IsBusy = false; 
         }
 
