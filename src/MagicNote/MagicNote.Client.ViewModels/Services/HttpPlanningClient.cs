@@ -16,7 +16,9 @@ namespace MagicNote.Client.ViewModels.Services
 	// TODO: Refactor the code of Http request and use a global user object instead of passing the token excplicityly as below
 	public class HttpPlanningClient : IPlanningClient
 	{
-		
+
+		private const string BaseUrl = "https://magicnote.azurewebsites.net";
+
 		public async Task<PlanDetails> AnalyzeNoteAsync(string token, string note)
 		{
 			if (string.IsNullOrWhiteSpace(note))
@@ -25,7 +27,7 @@ namespace MagicNote.Client.ViewModels.Services
 			using var client = new HttpClient();
 			client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-			var response = await client.PostAsJsonAsync("https://localhost:7210/analyze-note", new
+			var response = await client.PostAsJsonAsync($"{BaseUrl}/analyze-note", new
 			{
 				query = note
 			});
@@ -50,7 +52,7 @@ namespace MagicNote.Client.ViewModels.Services
 			using var client = new HttpClient();
 			client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-			var response = await client.PostAsJsonAsync("https://localhost:7210/submit-plan", request);
+			var response = await client.PostAsJsonAsync($"{BaseUrl}/submit-plan", request);
 
 			if (!response.IsSuccessStatusCode)
 			{ 
