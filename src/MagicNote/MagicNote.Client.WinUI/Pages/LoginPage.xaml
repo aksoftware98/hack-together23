@@ -12,6 +12,8 @@
 
     <StackPanel HorizontalAlignment="Center"
                 VerticalAlignment="Center">
+        <Image Source="ms-appx:///Assets/Square44x44Logo.png" Width="140"
+               Height="140" Margin="0, 10" />
         <TextBlock Text="Welcome to Magic Note" 
                    Style="{ThemeResource TitleTextBlockStyle}"
                    Margin="5"/>
