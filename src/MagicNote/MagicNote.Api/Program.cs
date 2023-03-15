@@ -3,11 +3,23 @@ using MagicNote.Core;
 using MagicNote.Core.Interfaces;
 using MagicNote.Shared;
 using MagicNote.Shared.DTOs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web;
 using Microsoft.Kiota.Abstractions.Authentication;
 using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+	.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
+	   .EnableTokenAcquisitionToCallDownstreamApi()
+			.AddMicrosoftGraph(builder.Configuration.GetSection("DownstreamApi"))
+			.AddInMemoryTokenCaches();
+
+
+builder.Services.AddAuthorization(); 
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -30,6 +42,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication(); 
+app.UseAuthorization();
 
 app.MapPost("/analyze-note", async ([FromBody]SubmitNoteRequest note, IPlanningService planningService) =>
 {
