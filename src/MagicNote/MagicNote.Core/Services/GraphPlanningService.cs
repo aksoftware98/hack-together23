@@ -3,8 +3,10 @@ using MagicNote.Core.Interfaces;
 using MagicNote.Core.Models;
 using MagicNote.Shared;
 using MagicNote.Shared.DTOs;
+using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Microsoft.Graph.Models.ODataErrors;
 using Microsoft.Kiota.Abstractions;
 using System;
 using System.Collections.Generic;
@@ -18,28 +20,30 @@ using System.Threading.Tasks;
 
 namespace MagicNote.Core.Services
 {
-	// TODO: Handle the date of the customer timezone 
 	public class GraphPlanningService : IPlanningService
 	{
 
 		private readonly ILanguageUnderstnadingService _language;
 		private readonly GraphServiceClient _graph;
 		private readonly HttpClient _httpClient;
-		public GraphPlanningService(ILanguageUnderstnadingService language,
-									GraphServiceClient graph,
-									HttpClient httpClient)
-		{
-			_language = language;
-			_graph = graph;
-			_httpClient = httpClient;
-		}
-		#region Analyze Note 
-		/// <summary>
-		/// Understand a note using AI and build a productivty plan out of it for user to review and fill the remaining data
-		/// </summary>
-		/// <param name="note">Note query request</param>
-		/// <returns></returns>
-		public async Task<PlanDetails> AnalyzeNoteAsync(SubmitNoteRequest note)
+        private readonly ILogger<GraphPlanningService> _logger;
+        public GraphPlanningService(ILanguageUnderstnadingService language,
+                                    GraphServiceClient graph,
+                                    HttpClient httpClient,
+                                    ILogger<GraphPlanningService> logger)
+        {
+            _language = language;
+            _graph = graph;
+            _httpClient = httpClient;
+            _logger = logger;
+        }
+        #region Analyze Note 
+        /// <summary>
+        /// Understand a note using AI and build a productivty plan out of it for user to review and fill the remaining data
+        /// </summary>
+        /// <param name="note">Note query request</param>
+        /// <returns></returns>
+        public async Task<PlanDetails> AnalyzeNoteAsync(SubmitNoteRequest note)
 		{
 			var items = new List<PlanItem>();
 
@@ -283,14 +287,14 @@ namespace MagicNote.Core.Services
 			var batchReqeustContent = new BatchRequestContent(_graph);
 
 			await BuildToDoItemsGraphRequestsAsync(plan, tomorrow, tasksList, userTimeZone, batchReqeustContent);
-			await BuildMeetingsGraphRequestsAsync(plan, year, month, day, batchReqeustContent);
-			await BuildEventsGraphRequestsAsync(plan, year, month, day, batchReqeustContent);
+			await BuildMeetingsGraphRequestsAsync(plan, year, month, day, userTimeZone, batchReqeustContent);
+			await BuildEventsGraphRequestsAsync(plan, year, month, day, userTimeZone, batchReqeustContent);
 
 			await _graph.Batch.PostAsync(batchReqeustContent);
 		}
 
 		#region Graph Calls 
-		private async Task BuildEventsGraphRequestsAsync(PlanDetails plan, int year, int month, int day, BatchRequestContent batchReqeustContent)
+		private async Task BuildEventsGraphRequestsAsync(PlanDetails plan, int year, int month, int day, string userTimeZone, BatchRequestContent batchReqeustContent)
 		{
 			// Check if there is meetings in the call 
 			var events = plan.Items.Where(i => i.Type == PlanEntityType.Event);
@@ -298,14 +302,14 @@ namespace MagicNote.Core.Services
 			{
 				foreach (var item in events)
 				{
-					RequestInformation calendarEventRequest = BuildPostEventGraphRequest(year, month, day, item);
+					RequestInformation calendarEventRequest = BuildPostEventGraphRequest(year, month, day, userTimeZone, item);
 
 					await batchReqeustContent.AddBatchRequestStepAsync(calendarEventRequest);
 				}
 			}
 		}
 
-		private async Task BuildMeetingsGraphRequestsAsync(PlanDetails plan, int year, int month, int day, BatchRequestContent batchReqeustContent)
+		private async Task BuildMeetingsGraphRequestsAsync(PlanDetails plan, int year, int month, int day, string userTimeZone, BatchRequestContent batchReqeustContent)
 		{
 			// Build the events item batch requests 
 			var meetings = plan.Items.Where(i => i.Type == PlanEntityType.Meeting);
@@ -313,7 +317,7 @@ namespace MagicNote.Core.Services
 			{
 				foreach (var item in meetings)
 				{
-					var calendarMeetingRequest = BuildPostMeetingGraphRequest(year, month, day, item);
+					var calendarMeetingRequest = BuildPostMeetingGraphRequest(year, month, day, userTimeZone, item);
 
 					foreach (var contact in item.People)
 					{
@@ -372,7 +376,7 @@ namespace MagicNote.Core.Services
 			}
 		}
 
-		private RequestInformation BuildPostEventGraphRequest(int year, int month, int day, PlanItem? item)
+		private RequestInformation BuildPostEventGraphRequest(int year, int month, int day, string userTimeZone, PlanItem? item)
 		{
 			var calendarEvent = new Event
 			{
@@ -380,13 +384,13 @@ namespace MagicNote.Core.Services
 				Start = new DateTimeTimeZone
 				{
 					DateTime = new DateTime(year, month, day, item.StartTime.Value.Hour, item.StartTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
-					TimeZone = "Asia/Dubai"
-				},
+					TimeZone = userTimeZone
+                },
 				End = new DateTimeTimeZone
 				{
 					DateTime = new DateTime(year, month, day, item.EndTime.Value.Hour, item.EndTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
-					TimeZone = "Asia/Dubai"
-				}
+					TimeZone = userTimeZone
+                }
 			};
 
 			var calendarEventRequest = _graph
@@ -396,7 +400,7 @@ namespace MagicNote.Core.Services
 			return calendarEventRequest;
 		}
 
-		private RequestInformation BuildPostMeetingGraphRequest(int year, int month, int day, PlanItem? item)
+		private RequestInformation BuildPostMeetingGraphRequest(int year, int month, int day, string userTimeZone, PlanItem? item)
 		{
 			var calendarMeeting = new Event
 			{
@@ -404,13 +408,13 @@ namespace MagicNote.Core.Services
 				Start = new DateTimeTimeZone
 				{
 					DateTime = new DateTime(year, month, day, item.StartTime.Value.Hour, item.StartTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
-					TimeZone = "Asia/Dubai"
-				},
+					TimeZone = userTimeZone
+                },
 				End = new DateTimeTimeZone
 				{
 					DateTime = new DateTime(year, month, day, item.EndTime.Value.Hour, item.EndTime.Value.Minute, 0).ToString("yyyy-MM-ddTHH:mm:ss.ffff"),
-					TimeZone = "Asia/Dubai"
-				},
+					TimeZone = userTimeZone
+                },
 				IsOnlineMeeting = true,
 				Attendees = item.People.Select(p => new Attendee
 				{
@@ -451,15 +455,29 @@ namespace MagicNote.Core.Services
 
 		private async Task<TodoTaskList> GetDefaultTasksListFromGraphAsync()
 		{
-			var tasksListResults = await _graph.Me
-												.Todo
-												.Lists
-												.GetAsync(config =>
-												{
-													config.QueryParameters.Filter = $"displayName eq 'Tasks'";
-												});
-			var tasksList = tasksListResults?.Value?.FirstOrDefault();
-			return tasksList;
+			try
+			{
+                var tasksListResults = await _graph.Me
+                                            .Todo
+                                            .Lists
+                                            .GetAsync(config =>
+                                            {
+                                                config.QueryParameters.Filter = $"displayName eq 'Tasks'";
+                                            });
+                var tasksList = tasksListResults?.Value?.FirstOrDefault();
+                return tasksList;
+            }
+			catch (ODataError ex)
+			{
+                _logger.LogError($"Response code: {ex.ResponseStatusCode}, Error message: {ex.Error?.Message}, while retrieving the tasks list from Graph");
+				throw;
+            }
+			catch (Exception ex)
+			{
+                _logger.LogError($"Failed to retrieve the tasks list from Graph: {ex.Message}");
+				throw; 
+            }
+		
 		}
 
 
@@ -479,8 +497,10 @@ namespace MagicNote.Core.Services
 			}
 			else
 			{
-				// Manage a better error handling 
-				throw new Exception("Error getting user time zone");
+				var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Failed to retrieve the user timezone from Graph: {errorContent}");
+                // Manage a better error handling 
+                throw new Exception("Error getting user time zone");
 			}
 
 		}
@@ -492,18 +512,32 @@ namespace MagicNote.Core.Services
 		/// </summary>
 		/// <param name="people">List of people mentioned in the sentence</param>
 		/// <returns></returns>
-		private async Task<ContactCollectionResponse> FetchContactsFromGraphAsync(IEnumerable<Models.Entity>? people)
+		private async Task<ContactCollectionResponse?> FetchContactsFromGraphAsync(IEnumerable<Models.Entity>? people)
 		{
 			var contactsFilter = string.Join(" or ", people.Select(p => $"contains(displayName, '{p.Text}')"));
-			var userEntities = (await _graph
-										.Me
-										.Contacts
-										.GetAsync(config =>
-										{
-											config.QueryParameters.Filter = contactsFilter;
-											config.QueryParameters.Select = new[] { "id", "displayName", "emailAddresses" };
-										}));
-			return userEntities;
+			try
+			{
+                var userEntities = (await _graph
+                                        .Me
+                                        .Contacts
+                                        .GetAsync(config =>
+                                        {
+                                            config.QueryParameters.Filter = contactsFilter;
+                                            config.QueryParameters.Select = new[] { "id", "displayName", "emailAddresses" };
+                                        }));
+                return userEntities;
+            }
+			catch (ODataError ex)
+			{
+                _logger.LogError($"Response status code: {ex.ResponseStatusCode}, Error message: {ex.Error?.Message}, while fetching the contacts from Graph");
+				return null;
+            }
+			catch (Exception ex)
+			{
+                _logger.LogError($"Error while fetching the contacts from Graph: {ex.Message}");
+				return null;
+            }
+			
 		}
 
 		#endregion
