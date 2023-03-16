@@ -31,7 +31,8 @@ builder.Services.AddPlanningService();
 
 // Add the Graph service client and an authorized HttpClient 
 builder.Services.AddAuthorizedHttpClient();
-builder.Services.AddGraphServiceClient(); 
+builder.Services.AddGraphServiceClient();
+builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
 
