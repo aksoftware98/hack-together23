@@ -31,6 +31,10 @@ Magic Note is an AI-powered application that allows your to plan your day smooth
 The app will have a simple text input where you can write all what you want to do for the next day (event, task, or a meeting with someone), after you submit your note, Magic Note with the help of AI and Microsoft Graph will understand the content and build a plan for you to review and make sure it aligns with what in your mind. 
 Once you feel good and make the edits, submit the plan and Magic Note will add all the resources (events, meetings, and to-do tasks) and add them for you with one click. 
 
+https://user-images.githubusercontent.com/35115273/225488733-1d075db9-e1cc-4ece-aedb-98fa137c3d38.mp4
+
+
+
 ## Magic Note Availabitliy 
 I have this idea in mind for long time but I was lazy to get it done, with the courage of the HackTogether it seems it's the good time to get it done. 
 I will make this app available on all the platforms, but for this hackathon it will be available only as a native Windows app (because I want to learn WinUI 😁) and make it availalbe on **Microsoft Surface Duo** Android Dual Screen device. 
