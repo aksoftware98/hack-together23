@@ -8,7 +8,7 @@ namespace MagicNote.Api.Extensions
 
 		public static IServiceCollection AddAuthorizedHttpClient(this IServiceCollection services)
 		{
-			return services.AddSingleton(sp =>
+			return services.AddScoped(sp =>
 			{
 				var context = sp.GetRequiredService<IHttpContextAccessor>();
 				var token = context.ExtractToken();
@@ -21,7 +21,7 @@ namespace MagicNote.Api.Extensions
 
 		public static IServiceCollection AddGraphServiceClient(this IServiceCollection services)
 		{
-			return services.AddSingleton(sp =>
+			return services.AddScoped(sp =>
 			{
 				var context = sp.GetRequiredService<IHttpContextAccessor>();
 				var token = context.ExtractToken();
