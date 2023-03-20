@@ -139,7 +139,7 @@ Following is the table of the tasks I want to get done for the hackathon and for
 | :white_check_mark: | Having AI models supprot understanding (tasks, meetings, and events) | Hackathon |
 | :white_check_mark: | Integrate with Microsoft Graph for (tasks, calendar events, and contacts) | Hackathon |
 | :white_check_mark: | Release the basic version of WinUI project for Windows 10, 11 | Hackathon |
-| :white_check_mark: | Release the basic version of the MAUI project to run on Microsoft Surface Duo | Hackathon | 
+| :white_square_button: | Release the basic version of the MAUI project to run on Microsoft Surface Duo | Hackathon | 
 | :white_check_mark: | Implement efficient validation for the request (client and server side) | Hackathon |
 | :white_check_mark: | Refactor the code of the analyzing logic on the server | Hackathon |
 | :white_square_button: | Support Sign-Out | v1 public |
