@@ -18,7 +18,7 @@ namespace MagicNote.Core
 			if (string.IsNullOrWhiteSpace(apiKey))
 				throw new ArgumentNullException(nameof(apiKey));
 			
-			return services.AddSingleton<ILanguageUnderstnadingService>(sp => new ConversationalLanguageUnderstandingService(sp.GetRequiredService<HttpClient>(), apiKey));
+			return services.AddScoped<ILanguageUnderstnadingService>(sp => new ConversationalLanguageUnderstandingService(sp.GetRequiredService<HttpClient>(), apiKey));
 		}
 
 		public static IServiceCollection AddPlanningService(this IServiceCollection services)
