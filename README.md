@@ -1,3 +1,12 @@
+# NOTE: 
+THIS PROJECT HAS BEEN REDEVELOPED FOR PRODUCTION USE AND IT'S AVAILABLE ON MICROSOFT STORE.
+
+<a href="https://www.microsoft.com/store/apps/9PG7JS2B17TD"><img src="https://github.com/aksoftware98/magic-365/blob/feature/build-readme/Assets/Get%20It%20on%20Windows.png?raw=true" style="width:200px" /></a>
+
+The code of the production project is also developed as an open-source software 
+
+[GitHub Source Code](https://github.com/aksoftware98/magic-365)
+
 # Magic Note - #Hack_Together
 This project is built to participate in the Microsft's hackathon #Hack_Together 
 
